@@ -10,35 +10,37 @@ import androidx.annotation.Nullable;
 
 public class HelperDB extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "dbexam.db";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 5;
     String strCreate, strDelete;
 
 
-    public HelperDB(Context context) {
+    public HelperDB(@Nullable Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         strCreate="CREATE TABLE "+ Students.TABLE_STUDENTS;
-        strCreate+=" ("+ Students.KEY_ID+" INTEGER PRIMARY KEY,";
+        strCreate+=" ("+ Students.KEY_ID_STUDENT+" INTEGER PRIMARY KEY,";
         strCreate+=" "+Students.NAME+" TEXT,";
         strCreate+=" "+Students.ADDRESS+" TEXT,";
-        strCreate+=" "+Students.RELEVANT+" INTEGER,"; // need to be boolean
+        strCreate+=" "+Students.ACTIVE+" INTEGER,"; // need to be boolean
         strCreate+=" "+Students.FATHER_NAME+" TEXT,";
         strCreate+=" "+Students.MOTHER_NAME+" TEXT,";
         strCreate+=" "+Students.FATHER_PHONE+" TEXT,";
         strCreate+=" "+Students.MOTHER_PHONE+" TEXT,";
         strCreate+=" "+Students.HOME_PHONE+" TEXT,";
         strCreate+=" "+Students.PRIVATE_PHONE+" TEXT";
+        strCreate+=" "+Students.FATHER_NAME+" TEXT";
         strCreate+=");";
         sqLiteDatabase.execSQL(strCreate);
 
 
         strCreate="CREATE TABLE "+ Grades.TABLE_GRADES;
-        strCreate+=" ("+Grades.KEY_ID+" INTEGER PRIMARY KEY,";
+        strCreate+=" ("+Grades.STUDENT+" INTEGER PRIMARY KEY,";
         strCreate+=" "+Grades.SUBJECT+" TEXT,";
         strCreate+=" "+Grades.GRADE+" REAL,";
+        //strCreate+=" "+Grades.GRADE_ID+" INTEGER,";
         strCreate+=" "+Grades.RELEVANT+" INTEGER";
         strCreate+=");";
         sqLiteDatabase.execSQL(strCreate);
