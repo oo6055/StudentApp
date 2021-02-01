@@ -44,8 +44,8 @@
                     android:layout_height="0dp"
                     android:layout_weight="1" />
 
-                <Spinner
-                    android:id="@+id/students"
+                <AutoCompleteTextView
+                    android:id="@+id/clsses"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1" />

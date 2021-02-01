@@ -1,35 +1,17 @@
 package com.example.studentapp;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.ContentValues;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnLongClickListener;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.Toast;
-
-import static com.example.studentapp.Students.ACTIVE;
-import static com.example.studentapp.Students.ADDRESS;
-import static com.example.studentapp.Students.FATHER_NAME;
-import static com.example.studentapp.Students.FATHER_PHONE;
-import static com.example.studentapp.Students.HOME_PHONE;
-import static com.example.studentapp.Students.MOTHER_NAME;
-import static com.example.studentapp.Students.MOTHER_PHONE;
-import static com.example.studentapp.Students.NAME;
-import static com.example.studentapp.Students.PRIVATE_PHONE;
 
 public class MainActivity extends AppCompatActivity {
     SQLiteDatabase db;
@@ -43,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
     EditText motherPhone;
     EditText fatherName;
     EditText fatherPhone;
-    EditText id;
+    EditText numOfclass;
     Intent si;
     ContentValues values;
 
@@ -60,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
         motherPhone = (EditText) findViewById(R.id.motherPhone);
         fatherName = (EditText) findViewById(R.id.fatherName);
         fatherPhone = (EditText) findViewById(R.id.fatherPhone);
-        id = (EditText) findViewById(R.id.Id);
+        numOfclass = (EditText) findViewById(R.id.grade);
         hlp = new HelperDB(this);
     }
 
@@ -79,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
             values.put(Students.FATHER_NAME, fatherName.getText().toString());
             values.put(Students.MOTHER_PHONE, motherPhone.getText().toString());
             values.put(Students.FATHER_PHONE, fatherPhone.getText().toString());
-            values.put(Students.KEY_ID_STUDENT, id.getText().toString());
+            values.put(Students.CLASS, numOfclass.getText().toString());
             values.put(Students.ACTIVE, true);
             // Inserting Row
             hlp = new HelperDB(this);
@@ -94,12 +76,11 @@ public class MainActivity extends AppCompatActivity {
             motherPhone.setText("");
             fatherName.setText("");
             fatherPhone.setText("");
-            id.setText("");
+            numOfclass.setText("");
         }
 
 
     }
-    public static final String KEY_ID = "_id";
 
 
     private boolean checkPhone(EditText e) {
@@ -112,17 +93,7 @@ public class MainActivity extends AppCompatActivity {
                 Toast.LENGTH_LONG).show();
         return false;
     }
-    private boolean checkID(EditText e) {
-        String text = e.getText().toString();
-        if(text.length() == 9) // need to check the number of bickort
-        {
-            return true;
-        }
-        Toast.makeText(this, "Invalid ID",
-                Toast.LENGTH_LONG).show();
-        return false;
 
-    }
     private boolean checkText(EditText e) {
         String text = e.getText().toString();
         if(!text.matches(""))
@@ -134,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
         return false;
     }
     private boolean checkData() {
-        return (checkText(name) && checkText(address) && checkText(motherName)&& checkID(id) && checkText(fatherName)&& checkPhone(fatherPhone)&& checkPhone(motherPhone)&& checkPhone(homePhone)&& checkPhone(phone));
+        return (checkText(name) && checkText(address) && checkText(motherName)&& checkText(numOfclass) && checkText(fatherName)&& checkPhone(fatherPhone)&& checkPhone(motherPhone)&& checkPhone(homePhone)&& checkPhone(phone));
     }
 
     /**
@@ -173,6 +144,27 @@ public class MainActivity extends AppCompatActivity {
         if(whatClicked.equals("enter grade"))
         {
             si = new Intent(this,EnterGrades.class);
+            startActivity(si);
+        }
+        else if(whatClicked.equals("show grades"))
+        {
+            si = new Intent(this,ShowGrades.class);
+            si.putExtra("toDo",false);
+            startActivity(si);
+        }
+        else if (whatClicked.equals("show students By classes"))
+        {
+            si = new Intent(this,showStudentsByGrades.class);
+            startActivity(si);
+        }
+        else if (whatClicked.equals("show students By classes"))
+        {
+            si = new Intent(this,showStudentsByGrades.class);
+            startActivity(si);
+        }
+        else if (whatClicked.equals("change students details"))
+        {
+            si = new Intent(this,UpdateStudent.class);
             startActivity(si);
         }
 

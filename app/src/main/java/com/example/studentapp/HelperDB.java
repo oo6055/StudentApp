@@ -4,13 +4,14 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+
 import androidx.annotation.Nullable;
 
 
 
 public class HelperDB extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "dbexam.db";
-    private static final int DATABASE_VERSION = 5;
+    private static final int DATABASE_VERSION = 14;
     String strCreate, strDelete;
 
 
@@ -23,6 +24,7 @@ public class HelperDB extends SQLiteOpenHelper {
         strCreate="CREATE TABLE "+ Students.TABLE_STUDENTS;
         strCreate+=" ("+ Students.KEY_ID_STUDENT+" INTEGER PRIMARY KEY,";
         strCreate+=" "+Students.NAME+" TEXT,";
+        strCreate+=" "+Students.CLASS+" TEXT,";
         strCreate+=" "+Students.ADDRESS+" TEXT,";
         strCreate+=" "+Students.ACTIVE+" INTEGER,"; // need to be boolean
         strCreate+=" "+Students.FATHER_NAME+" TEXT,";
@@ -37,10 +39,10 @@ public class HelperDB extends SQLiteOpenHelper {
 
 
         strCreate="CREATE TABLE "+ Grades.TABLE_GRADES;
-        strCreate+=" ("+Grades.STUDENT+" INTEGER PRIMARY KEY,";
+        strCreate+=" ("+Grades.STUDENT+" INTEGER,";
         strCreate+=" "+Grades.SUBJECT+" TEXT,";
         strCreate+=" "+Grades.GRADE+" REAL,";
-        //strCreate+=" "+Grades.GRADE_ID+" INTEGER,";
+        strCreate+=" "+Grades.GRADE_ID+" INTEGER PRIMARY KEY,";
         strCreate+=" "+Grades.RELEVANT+" INTEGER";
         strCreate+=");";
         sqLiteDatabase.execSQL(strCreate);

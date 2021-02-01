@@ -10,6 +10,12 @@
         android:title="enter grade"
         />
     <item
-        android:title="show data"
+        android:title="show grades"
         />
+    <item
+        android:title="show students By classes"
+        />
+    <item
+        android:title="change students details"
+    />
 </menu>

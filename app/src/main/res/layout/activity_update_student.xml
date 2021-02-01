@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".UpdateStudent">
 
     <Space
         android:layout_width="0dp"
@@ -17,6 +17,19 @@
         android:layout_weight="4"
         android:orientation="vertical">
 
+        <AutoCompleteTextView
+            android:id="@+id/student"
+            android:layout_width="match_parent"
+            android:layout_height="0px"
+            android:layout_weight="1"
+            android:hint="studentName" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="0px"
+            android:layout_weight="0.5
+" />
+
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="0px"
@@ -28,127 +41,112 @@
                 android:layout_weight="1"
                 android:orientation="vertical">
 
-                <EditText
+                <TextView
                     android:id="@+id/name"
                     android:layout_width="match_parent"
                     android:layout_height="0px"
                     android:layout_weight="1"
-                    android:ems="10"
-                    android:hint="name"
-                    android:inputType="textPersonName" />
+                    android:text="name" />
 
                 <Space
                     android:layout_width="match_parent"
                     android:layout_height="0px"
                     android:layout_weight="1.5" />
-
-                <EditText
+                <TextView
                     android:id="@+id/grade"
                     android:layout_width="match_parent"
                     android:layout_height="0px"
-                    android:layout_weight="1"
-                    android:ems="10"
-                    android:hint="grade"
-                    android:inputType="textPersonName" />
+                    android:text="class"
+                    android:layout_weight="1" />
+
 
                 <Space
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1.5" />
 
-                <EditText
+                <TextView
                     android:id="@+id/address"
                     android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:ems="10"
-                    android:hint="address"
-                    android:inputType="textPersonName" />
+                    android:layout_height="0px"
+                    android:text="address"
+                    android:layout_weight="1" />
+
 
                 <Space
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1.5" />
 
-
-                <EditText
+                <TextView
                     android:id="@+id/personalPhone"
                     android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:ems="10"
-                    android:hint="student Phone"
-                    android:inputType="phone" />
+                    android:layout_height="0px"
+                    android:text="personalPhone"
+                    android:layout_weight="1" />
+
 
                 <Space
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1.5" />
 
-                <EditText
+                <TextView
                     android:id="@+id/homePhone"
                     android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:ems="10"
-                    android:hint="Home phone"
-                    android:inputType="phone" />
+                    android:layout_height="0px"
+                    android:text="homePhone"
+                    android:layout_weight="1" />
+
 
                 <Space
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1.5" />
 
-                <EditText
+                <TextView
                     android:id="@+id/motherName"
                     android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:ems="10"
-                    android:hint="mother name"
-                    android:inputType="textPersonName" />
+                    android:layout_height="0px"
+                    android:text="motherName"
+                    android:layout_weight="1" />
 
                 <Space
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1.5" />
 
-                <EditText
+                <TextView
                     android:id="@+id/motherPhone"
                     android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:ems="10"
-                    android:hint="mother phone"
-                    android:inputType="phone" />
+                    android:layout_height="0px"
+                    android:text="mother Phone"
+                    android:layout_weight="1" />
 
                 <Space
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1.5" />
 
-                <EditText
+                <TextView
                     android:id="@+id/fatherName"
                     android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:ems="10"
-                    android:hint="father name"
-                    android:inputType="textPersonName" />
+                    android:layout_height="0px"
+                    android:text="father Name"
+                    android:layout_weight="1" />
 
                 <Space
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1.5" />
 
-                <EditText
+                <TextView
                     android:id="@+id/fatherPhone"
                     android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:ems="10"
-                    android:hint="father phone"
-                    android:inputType="phone" />
+                    android:layout_height="0px"
+                    android:text="father Phone"
+                    android:layout_weight="1" />
+
 
                 <Space
                     android:layout_width="match_parent"
@@ -159,8 +157,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1"
-                    android:onClick="submit"
-                    android:text="submit" />
+                    android:onClick="show"
+                    android:text="show" />
 
             </LinearLayout>
         </ScrollView>

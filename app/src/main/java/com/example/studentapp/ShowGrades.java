@@ -2,58 +2,52 @@ package com.example.studentapp;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
-public class EnterGrades extends AppCompatActivity {
-
+public class ShowGrades extends AppCompatActivity implements View.OnCreateContextMenuListener {
     SQLiteDatabase db;
     HelperDB hlp;
     Intent si;
-    Spinner samasters;
     ArrayAdapter<String> adp;
     Cursor crsr;
-    String[] samastersStr;
-    EditText gradeValue;
-    EditText subject;
-    ContentValues values;
+    ListView ls;
 
     AutoCompleteTextView students;
     ArrayList<String> tbl = new ArrayList<>();
+    ArrayList<String> grades = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_enter_grades);
+        setContentView(R.layout.activity_show_grades);
 
-        subject = (EditText) findViewById(R.id.subject);
-        gradeValue = (EditText) findViewById(R.id.grade);
-
-        samasters = (Spinner) findViewById(R.id.samaster);
         students = (AutoCompleteTextView) findViewById(R.id.clsses);
-        samastersStr = new String[]{"Samasters","1","2","3","4"};
-        adp = new ArrayAdapter<String>(this
-                ,R.layout.support_simple_spinner_dropdown_item,samastersStr);
-        samasters.setAdapter(adp);
+        ls = (ListView) findViewById(R.id.grades);
+
         hlp = new HelperDB(this);
         getStudents();
-
-
-
+        if(getIntent().getBooleanExtra("toDo",false))
+        {
+            students.setText(getIntent().getStringExtra("name"));
+            search(ls);
+        }
     }
 
     public void getStudents() {
@@ -94,49 +88,24 @@ public class EnterGrades extends AppCompatActivity {
         //getId("ori");
     }
 
-    private boolean checkText(EditText e) {
-        String text = e.getText().toString();
-        if (!text.matches("")) {
-            return true;
-        }
-        Toast.makeText(this, "fill everything",
-                Toast.LENGTH_LONG).show();
-        return false;
-    }
+    public void search(View view) {
+        String name = students.getText().toString();
 
-    public void addGrade(View view) {
-        boolean result = checkText(subject) && checkText(gradeValue) && Integer.valueOf(gradeValue.getText().toString()) > 0 && checkSpinner(samasters)&& checkText(students);
+        // need checkes
+        String studentId = getId(name);
 
-
-        if (result)
-        {
-            values = new ContentValues();
-            values.put(Grades.GRADE, gradeValue.getText().toString());
-            values.put(Grades.RELEVANT, true);
-            values.put(Grades.SUBJECT , subject.getText().toString());
-            //values.put(Grades.GRADE_ID , getGradeId());
-            values.put(Grades.STUDENT, Integer.valueOf(getId((String) students.getText().toString())));
-            // Inserting Row
-            hlp = new HelperDB(this);
-            db = hlp.getWritableDatabase();
-            db.insert(Grades.TABLE_GRADES, null, values);
-            db.close();
-            gradeValue.setText("");
-            subject.setText("");
-            samasters.setSelection(0);
-            students.setText("");
-        }
-    }
-
-    private int getGradeId() {
-        String[] columns = {Grades.GRADE_ID};
-        String selection = null;
-        String[] selectionArgs = null;
+        // query
+        String[] columns = {Grades.SUBJECT,Grades.RELEVANT,Grades.GRADE};
+        String selection = Grades.STUDENT + "=?";
+        String[] selectionArgs = {studentId};
         String groupBy = null;
         String having = null;
-        String orderBy = Grades.GRADE_ID+" DESC";;
+        String orderBy = null;
         String limit = null;
-        String id = "";
+        String subject = "";
+        String grade = "";
+        Boolean rel = true;
+        grades = new ArrayList<>();
 
 
         db = hlp.getWritableDatabase();
@@ -144,20 +113,30 @@ public class EnterGrades extends AppCompatActivity {
         crsr = db.query(Grades.TABLE_GRADES, columns, selection, selectionArgs, groupBy, having, orderBy, limit);
         crsr.moveToFirst();
 
-        int idIndex = crsr.getColumnIndex(Grades.GRADE_ID);
+        int idIndex = 0;
 
         while (!crsr.isAfterLast())
         {
-            id = crsr.getString(idIndex);
+            idIndex = crsr.getColumnIndex(Grades.SUBJECT);
+            subject = crsr.getString(idIndex);
+
+            idIndex = crsr.getColumnIndex(Grades.RELEVANT);
+            rel = Boolean.valueOf(crsr.getString(idIndex));
+
+            idIndex = crsr.getColumnIndex(Grades.GRADE);
+            grade = crsr.getString(idIndex);
+
+            grades.add(subject + ":" + grade);
+
             crsr.moveToNext();
         }
 
         crsr.close();
         db.close();
-        if (id == "") {
-            return 0;
-        }
-        return (Integer.valueOf(id)+1);
+        adp = new ArrayAdapter<String>(this,
+                android.R.layout.simple_spinner_item, grades);
+        ls.setAdapter(adp);
+
     }
 
     private String getId(String s) {
@@ -197,15 +176,85 @@ public class EnterGrades extends AppCompatActivity {
         return idStud;
     }
 
-    private boolean checkSpinner(Spinner s) {
-        if(s.getSelectedItemPosition() == 0)
+    /**
+     * onCreateContextMenu
+     * Short description.
+     * onCreateContextMenu listener use for the ContextMenu
+     * <p>
+     *     ContextMenu menu
+     *     View v
+     *     ContextMenu.ContextMenuInfo menuInfo
+     *
+     * @param  menu - the object,v - the item that selected ,menuInfo - the info
+     * @return	none
+     */
+    //@Overrid
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        menu.setHeaderTitle("options");
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.gradeoption, menu);
+    }
+
+    /**
+     * onContextItemSelected
+     * Short description.
+     * onContextItemSelected listener use for the ContextMenu
+     * <p>
+     *     MenuItem item
+     *
+     * @param  item - the item that selected
+     * @return	true if it worked
+     */
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        String op = item.getTitle().toString();
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        int i = info.position;
+
+        if (op.equals("show grades"))
         {
-            Toast.makeText(this, "choose in the spinner",
-                    Toast.LENGTH_LONG).show();
-            return false;
+            si = new Intent(this,ShowGrades.class);
+            si.putExtra("name",students.get(i));
+            si.putExtra("toDo",true);
+            startActivity(si);
+        }
+        else if (op.equals("change details"))
+        {
+            si = new Intent(this,UpdateStudent.class);
+            si.putExtra("name",students.get(i));
+            si.putExtra("toDo",true);
+            startActivity(si);
+        }
+        else if (op.equals("delete student"))
+        {
+
+            db = hlp.getWritableDatabase();
+
+            // delete the grades
+            values = new ContentValues();
+            values.put(Grades.RELEVANT,false); // the new ID
+            db.update(Grades.TABLE_GRADES, values, "Student = ?", new String[]{getId(students.get(i))});
+
+            // delete the student
+            values = new ContentValues();
+
+            values.put(Students.ACTIVE, false);
+            db = hlp.getWritableDatabase();
+
+            db.update(Students.TABLE_STUDENTS, values, "_id = ?", new String[]{getId(students.get(i))});
+
+
+            db.close();
+
+
+            classes.setText(getIntent().getStringExtra("name"));
+            search(ls);
+
+            // need to change thew graeds to the new ID and to update the system
         }
         return true;
     }
+
 
     /**
      * onCreateContextMenu
@@ -248,6 +297,4 @@ public class EnterGrades extends AppCompatActivity {
 
         return  true;
     }
-
-
 }

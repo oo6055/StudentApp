@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ShowGrades">
+    tools:context=".showStudentsByGrades">
 
     <LinearLayout
         android:layout_width="0dp"
@@ -33,7 +33,7 @@
                 android:layout_width="0px"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:hint="class" />
+                android:hint="studentName" />
 
             <Space
                 android:layout_width="0dp"
@@ -47,10 +47,10 @@
             android:layout_weight="1" />
 
         <ListView
-            android:id="@+id/grades"
+            android:id="@+id/students"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="20">
+            android:layout_weight="15">
 
         </ListView>
 
@@ -71,7 +71,6 @@
                 android:layout_weight="1" />
 
             <Button
-                android:id="@+id/search"
                 android:layout_width="0px"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
