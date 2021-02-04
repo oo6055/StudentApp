@@ -34,9 +34,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        name = (EditText) findViewById(R.id.name);
+        name = (EditText) findViewById(R.id.nameOfStudent);
         phone = (EditText) findViewById(R.id.personalPhone);
-        address = (EditText) findViewById(R.id.address);
+        address = (EditText) findViewById(R.id.samster);
         homePhone = (EditText) findViewById(R.id.homePhone);
         motherName = (EditText) findViewById(R.id.motherName);
         motherPhone = (EditText) findViewById(R.id.motherPhone);

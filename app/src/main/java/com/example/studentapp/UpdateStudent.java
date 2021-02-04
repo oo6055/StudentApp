@@ -15,11 +15,9 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -54,9 +52,9 @@ public class UpdateStudent extends AppCompatActivity implements View.OnCreateCon
 
 
         students = (AutoCompleteTextView) findViewById(R.id.student);
-        nametv = (TextView) findViewById(R.id.name);
+        nametv = (TextView) findViewById(R.id.nameOfStudent);
         gradetv = (TextView) findViewById(R.id.grade);
-        addresstv = (TextView) findViewById(R.id.address);
+        addresstv = (TextView) findViewById(R.id.samster);
         personalPhonetv = (TextView) findViewById(R.id.personalPhone);
         homePhonetv = (TextView) findViewById(R.id.homePhone);
         motherNametv = (TextView) findViewById(R.id.motherName);
@@ -271,7 +269,7 @@ public class UpdateStudent extends AppCompatActivity implements View.OnCreateCon
     public boolean onContextItemSelected(MenuItem item) {
         TextView[] textVies= {nametv,gradetv,addresstv,personalPhonetv,homePhonetv,motherNametv,
                 fatherNametv,motherPhonetv,fatherPhonetv};
-        int[] idies= {(R.id.name),(R.id.grade),(R.id.address),(R.id.personalPhone),(R.id.homePhone),(R.id.motherName),
+        int[] idies= {(R.id.nameOfStudent),(R.id.grade),(R.id.samster),(R.id.personalPhone),(R.id.homePhone),(R.id.motherName),
                 (R.id.fatherName),(R.id.motherPhone),(R.id.fatherPhone)};
         String[] student = {Students.NAME,Students.CLASS,Students.ADDRESS,Students.PRIVATE_PHONE,Students.HOME_PHONE
                 ,Students.MOTHER_NAME,Students.FATHER_NAME,Students.MOTHER_PHONE
@@ -301,6 +299,7 @@ public class UpdateStudent extends AppCompatActivity implements View.OnCreateCon
                 // then app will close
                 ContentValues values;
                 values = new ContentValues();
+                /*
                 values.put(Students.NAME, nametv.getText().toString());
                 values.put(Students.ADDRESS, addresstv.getText().toString());
                 values.put(Students.PRIVATE_PHONE, personalPhonetv.getText().toString());
@@ -310,6 +309,8 @@ public class UpdateStudent extends AppCompatActivity implements View.OnCreateCon
                 values.put(Students.MOTHER_PHONE, motherPhonetv.getText().toString());
                 values.put(Students.FATHER_PHONE, fatherPhonetv.getText().toString());
                 values.put(Students.CLASS, gradetv.getText().toString());
+                */
+
                 values.put(Students.ACTIVE, false);
 
                 db = hlp.getWritableDatabase();
@@ -404,6 +405,27 @@ public class UpdateStudent extends AppCompatActivity implements View.OnCreateCon
     public boolean onOptionsItemSelected(MenuItem item) {
         String whatClicked = (String) item.getTitle();
 
+        if(whatClicked.equals("enter grade"))
+        {
+            si = new Intent(this,EnterGrades.class);
+            startActivity(si);
+        }
+        else if(whatClicked.equals("show grades"))
+        {
+            si = new Intent(this,ShowGrades.class);
+            si.putExtra("toDo",false);
+            startActivity(si);
+        }
+        else if (whatClicked.equals("show students By classes"))
+        {
+            si = new Intent(this,showStudentsByGrades.class);
+            startActivity(si);
+        }
+        else if (whatClicked.equals("show students By classes"))
+        {
+            si = new Intent(this,showStudentsByGrades.class);
+            startActivity(si);
+        }
         if(whatClicked.equals("add student"))
         {
             si = new Intent(this,MainActivity.class);
@@ -412,5 +434,7 @@ public class UpdateStudent extends AppCompatActivity implements View.OnCreateCon
 
         return  true;
     }
+
+
 
 }

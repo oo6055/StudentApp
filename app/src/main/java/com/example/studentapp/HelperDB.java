@@ -11,7 +11,7 @@ import androidx.annotation.Nullable;
 
 public class HelperDB extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "dbexam.db";
-    private static final int DATABASE_VERSION = 14;
+    private static final int DATABASE_VERSION = 16;
     String strCreate, strDelete;
 
 
@@ -41,6 +41,7 @@ public class HelperDB extends SQLiteOpenHelper {
         strCreate="CREATE TABLE "+ Grades.TABLE_GRADES;
         strCreate+=" ("+Grades.STUDENT+" INTEGER,";
         strCreate+=" "+Grades.SUBJECT+" TEXT,";
+        strCreate+=" "+Grades.SAMASTER+" TEXT,";
         strCreate+=" "+Grades.GRADE+" REAL,";
         strCreate+=" "+Grades.GRADE_ID+" INTEGER PRIMARY KEY,";
         strCreate+=" "+Grades.RELEVANT+" INTEGER";

@@ -9,11 +9,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.StudentApp">
-        <activity android:name=".UpdateStudent"></activity>
+        <activity android:name=".MainActivity"></activity>
+        <activity android:name=".ChangeGrades" />
+        <activity android:name=".UpdateStudent" />
         <activity android:name=".showStudentsByGrades" />
         <activity android:name=".ShowGrades" />
         <activity android:name=".EnterGrades" />
-        <activity android:name=".MainActivity">
+        <activity android:name=".startOptions">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

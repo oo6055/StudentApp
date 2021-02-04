@@ -28,6 +28,7 @@ public class ShowGrades extends AppCompatActivity implements View.OnCreateContex
     ArrayAdapter<String> adp;
     Cursor crsr;
     ListView ls;
+    ArrayList<Integer> idArr;
 
     AutoCompleteTextView students;
     ArrayList<String> tbl = new ArrayList<>();
@@ -95,7 +96,7 @@ public class ShowGrades extends AppCompatActivity implements View.OnCreateContex
         String studentId = getId(name);
 
         // query
-        String[] columns = {Grades.SUBJECT,Grades.RELEVANT,Grades.GRADE};
+        String[] columns = {Grades.SUBJECT,Grades.RELEVANT,Grades.GRADE,Grades.GRADE_ID};
         String selection = Grades.STUDENT + "=?";
         String[] selectionArgs = {studentId};
         String groupBy = null;
@@ -104,8 +105,9 @@ public class ShowGrades extends AppCompatActivity implements View.OnCreateContex
         String limit = null;
         String subject = "";
         String grade = "";
-        Boolean rel = true;
+        String rel;
         grades = new ArrayList<>();
+        idArr = new ArrayList<>();
 
 
         db = hlp.getWritableDatabase();
@@ -121,12 +123,20 @@ public class ShowGrades extends AppCompatActivity implements View.OnCreateContex
             subject = crsr.getString(idIndex);
 
             idIndex = crsr.getColumnIndex(Grades.RELEVANT);
-            rel = Boolean.valueOf(crsr.getString(idIndex));
+            rel = crsr.getString(idIndex);
 
             idIndex = crsr.getColumnIndex(Grades.GRADE);
             grade = crsr.getString(idIndex);
 
-            grades.add(subject + ":" + grade);
+            idIndex = crsr.getColumnIndex(Grades.GRADE_ID);
+
+            if (rel.equals("1"))
+            {
+                idArr.add(Integer.valueOf(crsr.getString(idIndex)));
+
+                grades.add(subject + ":" + grade);
+            }
+
 
             crsr.moveToNext();
         }
@@ -136,7 +146,7 @@ public class ShowGrades extends AppCompatActivity implements View.OnCreateContex
         adp = new ArrayAdapter<String>(this,
                 android.R.layout.simple_spinner_item, grades);
         ls.setAdapter(adp);
-
+        ls.setOnCreateContextMenuListener(this);
     }
 
     private String getId(String s) {
@@ -211,47 +221,30 @@ public class ShowGrades extends AppCompatActivity implements View.OnCreateContex
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         int i = info.position;
 
-        if (op.equals("show grades"))
+
+        if (op.equals("change grade"))
         {
-            si = new Intent(this,ShowGrades.class);
-            si.putExtra("name",students.get(i));
+            si = new Intent(this,ChangeGrades.class);
+            si.putExtra("graeId",idArr.get(i));
             si.putExtra("toDo",true);
             startActivity(si);
+            search(ls);
         }
-        else if (op.equals("change details"))
-        {
-            si = new Intent(this,UpdateStudent.class);
-            si.putExtra("name",students.get(i));
-            si.putExtra("toDo",true);
-            startActivity(si);
-        }
-        else if (op.equals("delete student"))
+
+        else if (op.equals("delete grade"))
         {
 
             db = hlp.getWritableDatabase();
 
             // delete the grades
-            values = new ContentValues();
+            ContentValues values = new ContentValues();
             values.put(Grades.RELEVANT,false); // the new ID
-            db.update(Grades.TABLE_GRADES, values, "Student = ?", new String[]{getId(students.get(i))});
+            db.update(Grades.TABLE_GRADES, values, "_id = ?", new String[]{String.valueOf(idArr.get(i))});
 
-            // delete the student
-            values = new ContentValues();
-
-            values.put(Students.ACTIVE, false);
-            db = hlp.getWritableDatabase();
-
-            db.update(Students.TABLE_STUDENTS, values, "_id = ?", new String[]{getId(students.get(i))});
-
-
-            db.close();
-
-
-            classes.setText(getIntent().getStringExtra("name"));
             search(ls);
-
             // need to change thew graeds to the new ID and to update the system
         }
+
         return true;
     }
 
@@ -289,11 +282,32 @@ public class ShowGrades extends AppCompatActivity implements View.OnCreateContex
     public boolean onOptionsItemSelected(MenuItem item) {
         String whatClicked = (String) item.getTitle();
 
+        if(whatClicked.equals("enter grade"))
+        {
+            si = new Intent(this,EnterGrades.class);
+            startActivity(si);
+        }
+        else if (whatClicked.equals("show students By classes"))
+        {
+            si = new Intent(this,showStudentsByGrades.class);
+            startActivity(si);
+        }
+        else if (whatClicked.equals("show students By classes"))
+        {
+            si = new Intent(this,showStudentsByGrades.class);
+            startActivity(si);
+        }
+        else if (whatClicked.equals("change students details"))
+        {
+            si = new Intent(this,UpdateStudent.class);
+            startActivity(si);
+        }
         if(whatClicked.equals("add student"))
         {
             si = new Intent(this,MainActivity.class);
             startActivity(si);
         }
+
 
         return  true;
     }

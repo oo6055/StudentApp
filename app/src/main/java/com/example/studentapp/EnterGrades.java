@@ -114,6 +114,8 @@ public class EnterGrades extends AppCompatActivity {
             values.put(Grades.GRADE, gradeValue.getText().toString());
             values.put(Grades.RELEVANT, true);
             values.put(Grades.SUBJECT , subject.getText().toString());
+            values.put(Grades.SAMASTER , samastersStr[samasters.getSelectedItemPosition()]);
+
             //values.put(Grades.GRADE_ID , getGradeId());
             values.put(Grades.STUDENT, Integer.valueOf(getId((String) students.getText().toString())));
             // Inserting Row
@@ -240,6 +242,27 @@ public class EnterGrades extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         String whatClicked = (String) item.getTitle();
 
+        if(whatClicked.equals("show grades"))
+        {
+            si = new Intent(this,ShowGrades.class);
+            si.putExtra("toDo",false);
+            startActivity(si);
+        }
+        else if (whatClicked.equals("show students By classes"))
+        {
+            si = new Intent(this,showStudentsByGrades.class);
+            startActivity(si);
+        }
+        else if (whatClicked.equals("show students By classes"))
+        {
+            si = new Intent(this,showStudentsByGrades.class);
+            startActivity(si);
+        }
+        else if (whatClicked.equals("change students details"))
+        {
+            si = new Intent(this,UpdateStudent.class);
+            startActivity(si);
+        }
         if(whatClicked.equals("add student"))
         {
             si = new Intent(this,MainActivity.class);
