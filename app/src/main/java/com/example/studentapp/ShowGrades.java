@@ -18,6 +18,8 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.Switch;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -29,6 +31,8 @@ public class ShowGrades extends AppCompatActivity implements View.OnCreateContex
     Cursor crsr;
     ListView ls;
     ArrayList<Integer> idArr;
+    boolean cond;
+    Switch sc;
 
     AutoCompleteTextView students;
     ArrayList<String> tbl = new ArrayList<>();
@@ -39,6 +43,9 @@ public class ShowGrades extends AppCompatActivity implements View.OnCreateContex
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_grades);
 
+        cond = true;
+
+        sc = (Switch) findViewById(R.id.switch1);
         students = (AutoCompleteTextView) findViewById(R.id.clsses);
         ls = (ListView) findViewById(R.id.grades);
 
@@ -63,6 +70,8 @@ public class ShowGrades extends AppCompatActivity implements View.OnCreateContex
         db = hlp.getWritableDatabase();
         crsr = db.query(Students.TABLE_STUDENTS, columns, selection, selectionArgs, groupBy, having, orderBy, limit);
         crsr.moveToFirst();
+
+        tbl = new ArrayList<>();
 
         int nameIndex = crsr.getColumnIndex(Students.NAME);
         tbl.add("students");
@@ -90,55 +99,115 @@ public class ShowGrades extends AppCompatActivity implements View.OnCreateContex
     }
 
     public void search(View view) {
-        String name = students.getText().toString();
-
-        // need checkes
-        String studentId = getId(name);
-
-        // query
-        String[] columns = {Grades.SUBJECT,Grades.RELEVANT,Grades.GRADE,Grades.GRADE_ID};
-        String selection = Grades.STUDENT + "=?";
-        String[] selectionArgs = {studentId};
-        String groupBy = null;
-        String having = null;
-        String orderBy = null;
-        String limit = null;
-        String subject = "";
-        String grade = "";
-        String rel;
-        grades = new ArrayList<>();
-        idArr = new ArrayList<>();
-
-
-        db = hlp.getWritableDatabase();
-
-        crsr = db.query(Grades.TABLE_GRADES, columns, selection, selectionArgs, groupBy, having, orderBy, limit);
-        crsr.moveToFirst();
-
-        int idIndex = 0;
-
-        while (!crsr.isAfterLast())
+        if (cond)
         {
-            idIndex = crsr.getColumnIndex(Grades.SUBJECT);
-            subject = crsr.getString(idIndex);
+            String name = students.getText().toString();
 
-            idIndex = crsr.getColumnIndex(Grades.RELEVANT);
-            rel = crsr.getString(idIndex);
-
-            idIndex = crsr.getColumnIndex(Grades.GRADE);
-            grade = crsr.getString(idIndex);
-
-            idIndex = crsr.getColumnIndex(Grades.GRADE_ID);
-
-            if (rel.equals("1"))
+            // need checkes
+            String studentId = getId(name);
+            if(studentId == "")
             {
-                idArr.add(Integer.valueOf(crsr.getString(idIndex)));
-
-                grades.add(subject + ":" + grade);
+                Toast.makeText(this, name + " is not found", Toast.LENGTH_SHORT).show();
+                return;
             }
 
+            // query
+            String[] columns = {Grades.SUBJECT,Grades.RELEVANT,Grades.GRADE,Grades.GRADE_ID};
+            String selection = Grades.STUDENT + "=?";
+            String[] selectionArgs = {studentId};
+            String groupBy = null;
+            String having = null;
+            String orderBy = null;
+            String limit = null;
+            String subject = "";
+            String grade = "";
+            String rel;
+            grades = new ArrayList<>();
+            idArr = new ArrayList<>();
 
-            crsr.moveToNext();
+
+            db = hlp.getWritableDatabase();
+
+            crsr = db.query(Grades.TABLE_GRADES, columns, selection, selectionArgs, groupBy, having, orderBy, limit);
+            crsr.moveToFirst();
+
+            int idIndex = 0;
+
+            while (!crsr.isAfterLast())
+            {
+                idIndex = crsr.getColumnIndex(Grades.SUBJECT);
+                subject = crsr.getString(idIndex);
+
+                idIndex = crsr.getColumnIndex(Grades.RELEVANT);
+                rel = crsr.getString(idIndex);
+
+                idIndex = crsr.getColumnIndex(Grades.GRADE);
+                grade = crsr.getString(idIndex);
+
+                idIndex = crsr.getColumnIndex(Grades.GRADE_ID);
+
+                if (rel.equals("1"))
+                {
+                    idArr.add(Integer.valueOf(crsr.getString(idIndex)));
+
+                    grades.add(subject + ":" + grade);
+                }
+
+
+                crsr.moveToNext();
+            }
+
+        }
+        else
+        {
+            String subject = students.getText().toString();
+
+            // query
+            String[] columns = {Grades.STUDENT,Grades.RELEVANT,Grades.GRADE,Grades.GRADE_ID};
+            String selection = Grades.SUBJECT + "=?";
+            String[] selectionArgs = {subject};
+            String groupBy = null;
+            String having = null;
+            String orderBy = null;
+            String limit = null;
+            String grade = "";
+            String rel;
+            String name;
+            grades = new ArrayList<>();
+            idArr = new ArrayList<>();
+
+
+            db = hlp.getWritableDatabase();
+
+            crsr = db.query(Grades.TABLE_GRADES, columns, selection, selectionArgs, groupBy, having, orderBy, limit);
+            crsr.moveToFirst();
+
+            int idIndex = 0;
+
+            while (!crsr.isAfterLast())
+            {
+                idIndex = crsr.getColumnIndex(Grades.RELEVANT);
+                rel = crsr.getString(idIndex);
+
+                idIndex = crsr.getColumnIndex(Grades.GRADE);
+                grade = crsr.getString(idIndex);
+
+                idIndex = crsr.getColumnIndex(Grades.STUDENT);
+                name = crsr.getString(idIndex);
+
+                idIndex = crsr.getColumnIndex(Grades.GRADE_ID);
+
+                if (rel.equals("1"))
+                {
+                    idArr.add(Integer.valueOf(crsr.getString(idIndex)));
+
+                    grades.add(getName(name) + ":" + grade);
+
+                }
+
+
+                crsr.moveToNext();
+            }
         }
 
         crsr.close();
@@ -147,7 +216,49 @@ public class ShowGrades extends AppCompatActivity implements View.OnCreateContex
                 android.R.layout.simple_spinner_item, grades);
         ls.setAdapter(adp);
         ls.setOnCreateContextMenuListener(this);
+
     }
+    private String getName(String id) {
+        String[] columns = {Students.NAME ,Students.ACTIVE };
+        String selection = Students.KEY_ID_STUDENT + "=?";
+        String[] selectionArgs = {id};
+        String groupBy = null;
+        String having = null;
+        String orderBy = null;
+        String limit = null;
+        String name = "";
+        Cursor temp;
+        int nameIndex;
+
+
+        db = hlp.getWritableDatabase();
+
+        temp = db.query(Students.TABLE_STUDENTS, columns, selection, selectionArgs, groupBy, having, orderBy, limit);
+        temp.moveToFirst();
+        while (!temp.isAfterLast())
+        {
+            nameIndex = temp.getColumnIndex(Students.ACTIVE);
+
+            String rel = temp.getString(nameIndex);
+            if(rel.equals("1"))
+            {
+                nameIndex = temp.getColumnIndex(Students.NAME);
+                name = temp.getString(nameIndex);
+                temp.close();
+                db.close();
+                return name;
+
+            }
+            temp.moveToNext();
+
+        }
+
+
+        temp.close();
+        db.close();
+        return name;
+    }
+
 
     private String getId(String s) {
         String[] columns = {Students.KEY_ID_STUDENT ,Students.ACTIVE }; // I am here
@@ -159,29 +270,31 @@ public class ShowGrades extends AppCompatActivity implements View.OnCreateContex
         String limit = null;
         String idStud = "";
         int nameIndex;
+        Cursor temp;
 
 
         db = hlp.getWritableDatabase();
-
-        crsr = db.query(Students.TABLE_STUDENTS, columns, selection, selectionArgs, groupBy, having, orderBy, limit);
-        crsr.moveToFirst();
-        while (!crsr.isAfterLast())
+        temp = db.query(Students.TABLE_STUDENTS, columns, selection, selectionArgs, groupBy, having, orderBy, limit);
+        temp.moveToFirst();
+        while (!temp.isAfterLast())
         {
-            nameIndex = crsr.getColumnIndex(Students.ACTIVE);
+            nameIndex = temp.getColumnIndex(Students.ACTIVE);
 
-            String rel = crsr.getString(nameIndex);
+            String rel = temp.getString(nameIndex);
             if(rel.equals("1"))
             {
-                nameIndex = crsr.getColumnIndex(Students.KEY_ID_STUDENT);
-                idStud = crsr.getString(nameIndex);
+                nameIndex = temp.getColumnIndex(Students.KEY_ID_STUDENT);
+                idStud = temp.getString(nameIndex);
+                temp.close();
+                db.close();
                 return idStud;
             }
-            crsr.moveToNext();
+            temp.moveToNext();
 
         }
 
 
-        crsr.close();
+        temp.close();
         db.close();
         return idStud;
     }
@@ -310,5 +423,60 @@ public class ShowGrades extends AppCompatActivity implements View.OnCreateContex
 
 
         return  true;
+    }
+
+    public void changeCond(View view) {
+        cond = !cond;
+        ls.setAdapter(null);
+        students.setText("");
+
+        if(cond)
+        {
+            getStudents();
+        }
+        else
+        {
+            getSubjects();
+        }
+    }
+
+    private void getSubjects() {
+        String[] columns = {Grades.SUBJECT,Grades.RELEVANT};
+        String selection = null;
+        String[] selectionArgs = null;
+        String groupBy = null;
+        String having = null;
+        String orderBy = null;
+        String limit = null;
+
+        db = hlp.getWritableDatabase();
+        crsr = db.query(Grades.TABLE_GRADES, columns, selection, selectionArgs, groupBy, having, orderBy, limit);
+        crsr.moveToFirst();
+
+        int nameIndex;
+        tbl = new ArrayList<>();
+        tbl.add("grades");
+        while (!crsr.isAfterLast())
+        {
+            nameIndex = crsr.getColumnIndex(Grades.RELEVANT);
+            String rel = crsr.getString(nameIndex);
+
+            nameIndex = crsr.getColumnIndex(Grades.SUBJECT);
+            String grade = crsr.getString(nameIndex);
+            if (rel.equals("1") && tbl.indexOf(grade) == -1)
+            {
+
+                tbl.add(grade);
+            }
+
+            crsr.moveToNext();
+        }
+        crsr.close();
+        db.close();
+        adp = new ArrayAdapter<String>(this,
+                android.R.layout.simple_spinner_item, tbl);
+        adp.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        students.setAdapter(adp);
     }
 }

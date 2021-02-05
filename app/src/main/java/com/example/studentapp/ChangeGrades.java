@@ -12,7 +12,6 @@ import android.os.Bundle;
 import android.text.InputType;
 import android.view.View;
 import android.view.View.OnLongClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -38,7 +37,7 @@ public class ChangeGrades extends AppCompatActivity implements OnLongClickListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_change_grades);
 
-        samster = (TextView) findViewById(R.id.samster);
+        samster = (TextView) findViewById(R.id.address);
         grades = (TextView) findViewById(R.id.grade);
         name = (TextView) findViewById(R.id.nameOfStudent);
         subject = (TextView) findViewById(R.id.subject);

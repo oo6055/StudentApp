@@ -31,13 +31,13 @@
                 <Space
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:layout_weight="1" />
+                    android:layout_weight="10" />
 
                 <Spinner
                     android:id="@+id/samaster"
                     android:layout_width="match_parent"
                     android:layout_height="0px"
-                    android:layout_weight="1" />
+                    android:layout_weight="20" />
 
                 <Space
                     android:layout_width="match_parent"
@@ -48,7 +48,8 @@
                     android:id="@+id/clsses"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:layout_weight="1" />
+                    android:layout_weight="30"
+                    android:hint="name" />
 
                 <Space
                     android:layout_width="match_parent"
@@ -59,8 +60,9 @@
                     android:id="@+id/grade"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:layout_weight="1"
+                    android:layout_weight="30"
                     android:ems="10"
+                    android:hint="grade"
                     android:inputType="numberDecimal" />
 
                 <Space
@@ -72,7 +74,7 @@
                     android:id="@+id/subject"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:layout_weight="1"
+                    android:layout_weight="30"
                     android:ems="10"
                     android:hint="subject"
                     android:inputType="textPersonName" />
@@ -85,7 +87,7 @@
                 <Button
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:layout_weight="1"
+                    android:layout_weight="30"
                     android:onClick="addGrade"
                     android:text="submit" />
 

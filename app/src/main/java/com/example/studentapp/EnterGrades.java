@@ -106,7 +106,11 @@ public class EnterGrades extends AppCompatActivity {
 
     public void addGrade(View view) {
         boolean result = checkText(subject) && checkText(gradeValue) && Integer.valueOf(gradeValue.getText().toString()) > 0 && checkSpinner(samasters)&& checkText(students);
-
+        if(getId((String) students.getText().toString()) == "")
+        {
+            Toast.makeText(this,  students.getText().toString()+" is not exsist", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         if (result)
         {
@@ -172,29 +176,31 @@ public class EnterGrades extends AppCompatActivity {
         String limit = null;
         String idStud = "";
         int nameIndex;
+        Cursor temp;
 
 
         db = hlp.getWritableDatabase();
-
-        crsr = db.query(Students.TABLE_STUDENTS, columns, selection, selectionArgs, groupBy, having, orderBy, limit);
-        crsr.moveToFirst();
-        while (!crsr.isAfterLast())
+        temp = db.query(Students.TABLE_STUDENTS, columns, selection, selectionArgs, groupBy, having, orderBy, limit);
+        temp.moveToFirst();
+        while (!temp.isAfterLast())
         {
-            nameIndex = crsr.getColumnIndex(Students.ACTIVE);
+            nameIndex = temp.getColumnIndex(Students.ACTIVE);
 
-            String rel = crsr.getString(nameIndex);
+            String rel = temp.getString(nameIndex);
             if(rel.equals("1"))
             {
-                nameIndex = crsr.getColumnIndex(Students.KEY_ID_STUDENT);
-                idStud = crsr.getString(nameIndex);
+                nameIndex = temp.getColumnIndex(Students.KEY_ID_STUDENT);
+                idStud = temp.getString(nameIndex);
+                temp.close();
+                db.close();
                 return idStud;
             }
-            crsr.moveToNext();
+            temp.moveToNext();
 
         }
 
 
-        crsr.close();
+        temp.close();
         db.close();
         return idStud;
     }

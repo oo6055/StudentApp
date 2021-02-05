@@ -19,6 +19,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -54,7 +55,7 @@ public class UpdateStudent extends AppCompatActivity implements View.OnCreateCon
         students = (AutoCompleteTextView) findViewById(R.id.student);
         nametv = (TextView) findViewById(R.id.nameOfStudent);
         gradetv = (TextView) findViewById(R.id.grade);
-        addresstv = (TextView) findViewById(R.id.samster);
+        addresstv = (TextView) findViewById(R.id.address);
         personalPhonetv = (TextView) findViewById(R.id.personalPhone);
         homePhonetv = (TextView) findViewById(R.id.homePhone);
         motherNametv = (TextView) findViewById(R.id.motherName);
@@ -65,6 +66,7 @@ public class UpdateStudent extends AppCompatActivity implements View.OnCreateCon
         TextView[] idies= {nametv,gradetv,addresstv,personalPhonetv,homePhonetv,motherNametv,
                 fatherNametv,motherPhonetv,fatherPhonetv};
 
+        hlp = new HelperDB(this);
         hlp = new HelperDB(this);
         getStudents();
 
@@ -93,6 +95,8 @@ public class UpdateStudent extends AppCompatActivity implements View.OnCreateCon
         db = hlp.getWritableDatabase();
         crsr = db.query(Students.TABLE_STUDENTS, columns, selection, selectionArgs, groupBy, having, orderBy, limit);
         crsr.moveToFirst();
+
+        tbl = new ArrayList<>();
 
         int nameIndex = crsr.getColumnIndex(Students.NAME);
         tbl.add("students");
@@ -124,6 +128,11 @@ public class UpdateStudent extends AppCompatActivity implements View.OnCreateCon
 
         // need checkes
         String studentId = getId(name);
+        if(studentId.equals(""))
+        {
+            Toast.makeText(this, name + " is not exsist", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         // query
         String[] columns = {Students.NAME,Students.ACTIVE,Students.CLASS,Students.FATHER_NAME,Students.FATHER_PHONE
@@ -269,7 +278,7 @@ public class UpdateStudent extends AppCompatActivity implements View.OnCreateCon
     public boolean onContextItemSelected(MenuItem item) {
         TextView[] textVies= {nametv,gradetv,addresstv,personalPhonetv,homePhonetv,motherNametv,
                 fatherNametv,motherPhonetv,fatherPhonetv};
-        int[] idies= {(R.id.nameOfStudent),(R.id.grade),(R.id.samster),(R.id.personalPhone),(R.id.homePhone),(R.id.motherName),
+        int[] idies= {(R.id.nameOfStudent),(R.id.grade),(R.id.address),(R.id.personalPhone),(R.id.homePhone),(R.id.motherName),
                 (R.id.fatherName),(R.id.motherPhone),(R.id.fatherPhone)};
         String[] student = {Students.NAME,Students.CLASS,Students.ADDRESS,Students.PRIVATE_PHONE,Students.HOME_PHONE
                 ,Students.MOTHER_NAME,Students.FATHER_NAME,Students.MOTHER_PHONE

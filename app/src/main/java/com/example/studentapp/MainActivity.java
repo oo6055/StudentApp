@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         name = (EditText) findViewById(R.id.nameOfStudent);
         phone = (EditText) findViewById(R.id.personalPhone);
-        address = (EditText) findViewById(R.id.samster);
+        address = (EditText) findViewById(R.id.address);
         homePhone = (EditText) findViewById(R.id.homePhone);
         motherName = (EditText) findViewById(R.id.motherName);
         motherPhone = (EditText) findViewById(R.id.motherPhone);
