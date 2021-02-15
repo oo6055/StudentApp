@@ -80,11 +80,12 @@
                 android:layout_weight="1" />
 
             <AutoCompleteTextView
-                android:id="@+id/clsses"
+                android:id="@+id/name"
                 android:layout_width="0px"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:hint="class" />
+                android:layout_weight="6"
+                android:gravity="center"
+                android:hint="Student Name" />
 
             <Space
                 android:layout_width="0dp"

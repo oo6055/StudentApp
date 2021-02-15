@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         name = (EditText) findViewById(R.id.nameOfStudent);
         phone = (EditText) findViewById(R.id.personalPhone);
-        address = (EditText) findViewById(R.id.address);
+        address = (EditText) findViewById(R.id.samster);
         homePhone = (EditText) findViewById(R.id.homePhone);
         motherName = (EditText) findViewById(R.id.motherName);
         motherPhone = (EditText) findViewById(R.id.motherPhone);
@@ -85,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
 
     private boolean checkPhone(EditText e) {
         String text = e.getText().toString();
-        if (text.length() == 10) // need to check the number of bickort
+        if (!text.equals("")) // need to check the number of bickort
         {
             return true;
         }
@@ -165,6 +165,11 @@ public class MainActivity extends AppCompatActivity {
         else if (whatClicked.equals("change students details"))
         {
             si = new Intent(this,UpdateStudent.class);
+            startActivity(si);
+        }
+        else if(whatClicked.equals("credits"))
+        {
+            si = new Intent(this,Credits.class);
             startActivity(si);
         }
 

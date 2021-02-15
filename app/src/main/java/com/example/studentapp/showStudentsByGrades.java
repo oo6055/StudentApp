@@ -19,6 +19,7 @@ import android.widget.ListView;
 import android.widget.Spinner;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class showStudentsByGrades extends AppCompatActivity implements View.OnCreateContextMenuListener
 {
@@ -41,7 +42,7 @@ public class showStudentsByGrades extends AppCompatActivity implements View.OnCr
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_students_by_grades);
-        classes = (AutoCompleteTextView) findViewById(R.id.clsses);
+        classes = (AutoCompleteTextView) findViewById(R.id.name);
         ls = (ListView) findViewById(R.id.students);
 
         hlp = new HelperDB(this);
@@ -130,6 +131,8 @@ public class showStudentsByGrades extends AppCompatActivity implements View.OnCr
 
         crsr.close();
         db.close();
+
+        Collections.sort(students);
         adp = new ArrayAdapter<String>(this,
                 android.R.layout.simple_spinner_item, students);
         ls.setAdapter(adp);
@@ -305,9 +308,14 @@ public class showStudentsByGrades extends AppCompatActivity implements View.OnCr
             si = new Intent(this,UpdateStudent.class);
             startActivity(si);
         }
-        if(whatClicked.equals("add student"))
+        else if(whatClicked.equals("add student"))
         {
             si = new Intent(this,MainActivity.class);
+            startActivity(si);
+        }
+        else if(whatClicked.equals("credits"))
+        {
+            si = new Intent(this,Credits.class);
             startActivity(si);
         }
 

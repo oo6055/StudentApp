@@ -2,7 +2,6 @@ package com.example.studentapp;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
@@ -17,11 +16,12 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.ListView;
-import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class ShowGrades extends AppCompatActivity implements View.OnCreateContextMenuListener {
     SQLiteDatabase db;
@@ -33,6 +33,7 @@ public class ShowGrades extends AppCompatActivity implements View.OnCreateContex
     ArrayList<Integer> idArr;
     boolean cond;
     Switch sc;
+    ArrayList<String> sortedString;
 
     AutoCompleteTextView students;
     ArrayList<String> tbl = new ArrayList<>();
@@ -46,7 +47,7 @@ public class ShowGrades extends AppCompatActivity implements View.OnCreateContex
         cond = true;
 
         sc = (Switch) findViewById(R.id.switch1);
-        students = (AutoCompleteTextView) findViewById(R.id.clsses);
+        students = (AutoCompleteTextView) findViewById(R.id.name);
         ls = (ListView) findViewById(R.id.grades);
 
         hlp = new HelperDB(this);
@@ -124,6 +125,7 @@ public class ShowGrades extends AppCompatActivity implements View.OnCreateContex
             String rel;
             grades = new ArrayList<>();
             idArr = new ArrayList<>();
+            sortedString = new ArrayList<>();
 
 
             db = hlp.getWritableDatabase();
@@ -150,6 +152,7 @@ public class ShowGrades extends AppCompatActivity implements View.OnCreateContex
                 {
                     idArr.add(Integer.valueOf(crsr.getString(idIndex)));
 
+                    sortedString.add(subject + ":" + grade);
                     grades.add(subject + ":" + grade);
                 }
 
@@ -175,7 +178,7 @@ public class ShowGrades extends AppCompatActivity implements View.OnCreateContex
             String name;
             grades = new ArrayList<>();
             idArr = new ArrayList<>();
-
+            sortedString = new ArrayList<>();
 
             db = hlp.getWritableDatabase();
 
@@ -201,8 +204,8 @@ public class ShowGrades extends AppCompatActivity implements View.OnCreateContex
                 {
                     idArr.add(Integer.valueOf(crsr.getString(idIndex)));
 
+                    sortedString.add(getName(name) + ":" + grade);
                     grades.add(getName(name) + ":" + grade);
-
                 }
 
 
@@ -212,8 +215,10 @@ public class ShowGrades extends AppCompatActivity implements View.OnCreateContex
 
         crsr.close();
         db.close();
+
+        Collections.sort(sortedString);
         adp = new ArrayAdapter<String>(this,
-                android.R.layout.simple_spinner_item, grades);
+                android.R.layout.simple_spinner_item, sortedString);
         ls.setAdapter(adp);
         ls.setOnCreateContextMenuListener(this);
 
@@ -338,7 +343,7 @@ public class ShowGrades extends AppCompatActivity implements View.OnCreateContex
         if (op.equals("change grade"))
         {
             si = new Intent(this,ChangeGrades.class);
-            si.putExtra("graeId",idArr.get(i));
+            si.putExtra("graeId",idArr.get(grades.indexOf(sortedString.get(i))));
             si.putExtra("toDo",true);
             startActivity(si);
             search(ls);
@@ -352,7 +357,7 @@ public class ShowGrades extends AppCompatActivity implements View.OnCreateContex
             // delete the grades
             ContentValues values = new ContentValues();
             values.put(Grades.RELEVANT,false); // the new ID
-            db.update(Grades.TABLE_GRADES, values, "_id = ?", new String[]{String.valueOf(idArr.get(i))});
+            db.update(Grades.TABLE_GRADES, values, "_id = ?", new String[]{String.valueOf(idArr.get(grades.indexOf(sortedString.get(i))))});
 
             search(ls);
             // need to change thew graeds to the new ID and to update the system
@@ -361,6 +366,61 @@ public class ShowGrades extends AppCompatActivity implements View.OnCreateContex
         return true;
     }
 
+    public void changeCond(View view) {
+        cond = !cond;
+        ls.setAdapter(null);
+        students.setText("");
+
+        if(cond)
+        {
+            students.setHint("Student Name");
+            getStudents();
+        }
+        else
+        {
+            students.setHint("Subjects Name");
+            getSubjects();
+        }
+    }
+
+    private void getSubjects() {
+        String[] columns = {Grades.SUBJECT,Grades.RELEVANT};
+        String selection = null;
+        String[] selectionArgs = null;
+        String groupBy = null;
+        String having = null;
+        String orderBy = null;
+        String limit = null;
+
+        db = hlp.getWritableDatabase();
+        crsr = db.query(Grades.TABLE_GRADES, columns, selection, selectionArgs, groupBy, having, orderBy, limit);
+        crsr.moveToFirst();
+
+        int nameIndex;
+        tbl = new ArrayList<>();
+        while (!crsr.isAfterLast())
+        {
+            nameIndex = crsr.getColumnIndex(Grades.RELEVANT);
+            String rel = crsr.getString(nameIndex);
+
+            nameIndex = crsr.getColumnIndex(Grades.SUBJECT);
+            String grade = crsr.getString(nameIndex);
+            if (rel.equals("1") && tbl.indexOf(grade) == -1)
+            {
+
+                tbl.add(grade);
+            }
+
+            crsr.moveToNext();
+        }
+        crsr.close();
+        db.close();
+        adp = new ArrayAdapter<String>(this,
+                android.R.layout.simple_spinner_item, tbl);
+        adp.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        students.setAdapter(adp);
+    }
 
     /**
      * onCreateContextMenu
@@ -415,9 +475,14 @@ public class ShowGrades extends AppCompatActivity implements View.OnCreateContex
             si = new Intent(this,UpdateStudent.class);
             startActivity(si);
         }
-        if(whatClicked.equals("add student"))
+        else if(whatClicked.equals("add student"))
         {
             si = new Intent(this,MainActivity.class);
+            startActivity(si);
+        }
+        else if(whatClicked.equals("credits"))
+        {
+            si = new Intent(this,Credits.class);
             startActivity(si);
         }
 
@@ -425,58 +490,4 @@ public class ShowGrades extends AppCompatActivity implements View.OnCreateContex
         return  true;
     }
 
-    public void changeCond(View view) {
-        cond = !cond;
-        ls.setAdapter(null);
-        students.setText("");
-
-        if(cond)
-        {
-            getStudents();
-        }
-        else
-        {
-            getSubjects();
-        }
-    }
-
-    private void getSubjects() {
-        String[] columns = {Grades.SUBJECT,Grades.RELEVANT};
-        String selection = null;
-        String[] selectionArgs = null;
-        String groupBy = null;
-        String having = null;
-        String orderBy = null;
-        String limit = null;
-
-        db = hlp.getWritableDatabase();
-        crsr = db.query(Grades.TABLE_GRADES, columns, selection, selectionArgs, groupBy, having, orderBy, limit);
-        crsr.moveToFirst();
-
-        int nameIndex;
-        tbl = new ArrayList<>();
-        tbl.add("grades");
-        while (!crsr.isAfterLast())
-        {
-            nameIndex = crsr.getColumnIndex(Grades.RELEVANT);
-            String rel = crsr.getString(nameIndex);
-
-            nameIndex = crsr.getColumnIndex(Grades.SUBJECT);
-            String grade = crsr.getString(nameIndex);
-            if (rel.equals("1") && tbl.indexOf(grade) == -1)
-            {
-
-                tbl.add(grade);
-            }
-
-            crsr.moveToNext();
-        }
-        crsr.close();
-        db.close();
-        adp = new ArrayAdapter<String>(this,
-                android.R.layout.simple_spinner_item, tbl);
-        adp.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        students.setAdapter(adp);
-    }
 }

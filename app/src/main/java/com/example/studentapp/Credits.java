@@ -8,13 +8,21 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
-public class startOptions extends AppCompatActivity {
-    Intent si;
+/**
+ * The Credits activity.
+ *
+ *  @author Ori Ofek <oriofek106@gmail.com> 15/02/2021
+ *  @version 1.0
+ *  @since 15/02/2021
+ *  sort description:
+ *  this is the activty the implement the exercise that my teacher gave and in this activity I create credits...
+ */
+public class Credits extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_start_options);
+        setContentView(R.layout.activity_credits);
     }
 
     /**
@@ -50,6 +58,7 @@ public class startOptions extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         String whatClicked = (String) item.getTitle();
 
+        Intent si;
         if(whatClicked.equals("enter grade"))
         {
             si = new Intent(this,EnterGrades.class);
@@ -79,11 +88,6 @@ public class startOptions extends AppCompatActivity {
         if(whatClicked.equals("add student"))
         {
             si = new Intent(this,MainActivity.class);
-            startActivity(si);
-        }
-        else if(whatClicked.equals("credits"))
-        {
-            si = new Intent(this,Credits.class);
             startActivity(si);
         }
 
