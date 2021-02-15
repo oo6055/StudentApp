@@ -13,10 +13,18 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity {
+/**
+ * The GetStudent activity.
+ *
+ *  @author Ori Ofek <oriofek106@gmail.com> 15/02/2021
+ *  @version 1.0
+ *  @since 15/02/2021
+ *  sort description:
+ *  this is the activty the implement the exercise that my teacher gave and in this activity I get the students...
+ */
+public class GetStudent extends AppCompatActivity {
     SQLiteDatabase db;
     HelperDB hlp;
-
     EditText name;
     EditText phone;
     EditText address;
@@ -33,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.get_student);
         name = (EditText) findViewById(R.id.nameOfStudent);
         phone = (EditText) findViewById(R.id.personalPhone);
         address = (EditText) findViewById(R.id.samster);
@@ -46,10 +54,20 @@ public class MainActivity extends AppCompatActivity {
         hlp = new HelperDB(this);
     }
 
-
+    /**
+     * submit.
+     * short dec: put the student into the table
+     *
+     * <p>
+     *      View view
+     * @param	view - see which button pressed
+     * @return	none
+     */
     public void submit(View view) {
 
         boolean isFine = checkData();
+
+        // if it is fine
         if(isFine)
         {
             values = new ContentValues();
@@ -63,6 +81,7 @@ public class MainActivity extends AppCompatActivity {
             values.put(Students.FATHER_PHONE, fatherPhone.getText().toString());
             values.put(Students.CLASS, numOfclass.getText().toString());
             values.put(Students.ACTIVE, true);
+
             // Inserting Row
             hlp = new HelperDB(this);
             db = hlp.getWritableDatabase();
@@ -78,11 +97,17 @@ public class MainActivity extends AppCompatActivity {
             fatherPhone.setText("");
             numOfclass.setText("");
         }
-
-
     }
 
-
+    /**
+     * checkPhone.
+     * short dec: check the phone
+     *
+     * <p>
+     *      EditText e
+     * @param	e - the et
+     * @return	if it is fine
+     */
     private boolean checkPhone(EditText e) {
         String text = e.getText().toString();
         if (!text.equals("")) // need to check the number of bickort
@@ -94,6 +119,15 @@ public class MainActivity extends AppCompatActivity {
         return false;
     }
 
+    /**
+     * checkText.
+     * short dec: check the text
+     *
+     * <p>
+     *      EditText e
+     * @param	e - the et
+     * @return	if it is fine
+     */
     private boolean checkText(EditText e) {
         String text = e.getText().toString();
         if(!text.matches(""))

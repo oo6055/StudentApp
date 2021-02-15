@@ -23,7 +23,16 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
-public class UpdateStudent extends AppCompatActivity implements View.OnCreateContextMenuListener {
+/**
+ * The UpdateStudent activity.
+ *
+ *  @author Ori Ofek <oriofek106@gmail.com> 15/02/2021
+ *  @version 1.0
+ *  @since 15/02/2021
+ *  sort description:
+ *  this is the activty the implement the exercise that my teacher gave and in this activity I update the details of the student
+ */
+public class UpdateStudent extends AppCompatActivity implements View.OnLongClickListener {
     SQLiteDatabase db;
     HelperDB hlp;
     Intent si;
@@ -39,8 +48,6 @@ public class UpdateStudent extends AppCompatActivity implements View.OnCreateCon
     TextView fatherNametv;
     TextView fatherPhonetv;
     int id;
-
-
     AutoCompleteTextView students;
     ArrayList<String> tbl = new ArrayList<>();
     AlertDialog.Builder builder;
@@ -49,8 +56,6 @@ public class UpdateStudent extends AppCompatActivity implements View.OnCreateCon
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_update_student);
-
-
 
         students = (AutoCompleteTextView) findViewById(R.id.student);
         nametv = (TextView) findViewById(R.id.nameOfStudent);
@@ -70,12 +75,13 @@ public class UpdateStudent extends AppCompatActivity implements View.OnCreateCon
         hlp = new HelperDB(this);
         getStudents();
 
-
+        // I am so Lazy (:
         for (int i = 0; i < idies.length; i++)
         {
             idies[i].setOnCreateContextMenuListener(this);
         }
 
+        // if we got a command from other activity
         if(getIntent().getBooleanExtra("toDo",false))
         {
             students.setText(getIntent().getStringExtra("name"));
@@ -83,6 +89,12 @@ public class UpdateStudent extends AppCompatActivity implements View.OnCreateCon
         }
     }
 
+    /**
+     * getStudents.
+     * short dec: get the current student and put it in the autoComplited
+     *
+     * @return	none
+     */
     public void getStudents() {
         String[] columns = {Students.NAME,Students.ACTIVE};
         String selection = null;
@@ -99,7 +111,6 @@ public class UpdateStudent extends AppCompatActivity implements View.OnCreateCon
         tbl = new ArrayList<>();
 
         int nameIndex = crsr.getColumnIndex(Students.NAME);
-        tbl.add("students");
         while (!crsr.isAfterLast())
         {
             nameIndex = crsr.getColumnIndex(Students.ACTIVE);
@@ -120,21 +131,30 @@ public class UpdateStudent extends AppCompatActivity implements View.OnCreateCon
         adp.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         students.setAdapter(adp);
-        //getId("ori");
     }
 
+    /**
+     * show.
+     * short dec: show the details
+     *
+     * <p>
+     *      View view
+     * @param	view - see which button pressed
+     * @return	none
+     */
     public void show(View view) {
         String name = students.getText().toString();
 
         // need checkes
         String studentId = getId(name);
+
+        // if the student is not exsist
         if(studentId.equals(""))
         {
             Toast.makeText(this, name + " is not exsist", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // query
         String[] columns = {Students.NAME,Students.ACTIVE,Students.CLASS,Students.FATHER_NAME,Students.FATHER_PHONE
                 ,Students.MOTHER_PHONE,Students.MOTHER_NAME,Students.HOME_PHONE,Students.ADDRESS,Students.PRIVATE_PHONE};
         String selection = Students.KEY_ID_STUDENT + "=?";
@@ -147,9 +167,8 @@ public class UpdateStudent extends AppCompatActivity implements View.OnCreateCon
         String temp = "";
         String rel = "";
 
-
+        // do the query
         db = hlp.getWritableDatabase();
-
         crsr = db.query(Students.TABLE_STUDENTS, columns, selection, selectionArgs, groupBy, having, orderBy, limit);
         crsr.moveToFirst();
 
@@ -159,8 +178,11 @@ public class UpdateStudent extends AppCompatActivity implements View.OnCreateCon
         {
             idIndex = crsr.getColumnIndex(Students.ACTIVE);
             rel = crsr.getString(idIndex);
+
+            // if the student is active
             if (rel.equals("1"))
             {
+                // put the data into it
                 idIndex = crsr.getColumnIndex(Students.NAME);
                 temp = crsr.getString(idIndex);
                 nametv.setText(temp);
@@ -199,10 +221,7 @@ public class UpdateStudent extends AppCompatActivity implements View.OnCreateCon
             }
             crsr.moveToNext();
         }
-
-
-
-        crsr.close();
+                crsr.close();
         db.close();
     }
     private String getId(String s) {
@@ -216,11 +235,11 @@ public class UpdateStudent extends AppCompatActivity implements View.OnCreateCon
         String idStud = "";
         int nameIndex;
 
-
+        // do the query
         db = hlp.getWritableDatabase();
-
         crsr = db.query(Students.TABLE_STUDENTS, columns, selection, selectionArgs, groupBy, having, orderBy, limit);
         crsr.moveToFirst();
+
         while (!crsr.isAfterLast())
         {
             nameIndex = crsr.getColumnIndex(Students.ACTIVE);
@@ -233,49 +252,24 @@ public class UpdateStudent extends AppCompatActivity implements View.OnCreateCon
                 return idStud;
             }
             crsr.moveToNext();
-
         }
-
 
         crsr.close();
         db.close();
         return idStud;
     }
 
-
-
     /**
-     * onCreateContextMenu
-     * Short description.
-     * onCreateContextMenu listener use for the ContextMenu
-     * <p>
-     *     ContextMenu menu
-     *     View v
-     *     ContextMenu.ContextMenuInfo menuInfo
+     * onLongClick.
+     * short dec: take teh data and change the db
      *
-     * @param  menu - the object,v - the item that selected ,menuInfo - the info
+     * <p>
+     *      View view
+     * @param	view - see which button pressed
      * @return	none
      */
-    //@Overrid
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        menu.setHeaderTitle("options");
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.updatestudentoption, menu);
-        id = v.getId();
-    }
-
-    /**
-     * onContextItemSelected
-     * Short description.
-     * onContextItemSelected listener use for the ContextMenu
-     * <p>
-     *     MenuItem item
-     *
-     * @param  item - the item that selected
-     * @return	true if it worked
-     */
     @Override
-    public boolean onContextItemSelected(MenuItem item) {
+    public boolean onLongClick(View view) {
         TextView[] textVies= {nametv,gradetv,addresstv,personalPhonetv,homePhonetv,motherNametv,
                 fatherNametv,motherPhonetv,fatherPhonetv};
         int[] idies= {(R.id.nameOfStudent),(R.id.grade),(R.id.samster),(R.id.personalPhone),(R.id.homePhone),(R.id.motherName),
@@ -284,9 +278,12 @@ public class UpdateStudent extends AppCompatActivity implements View.OnCreateCon
                 ,Students.MOTHER_NAME,Students.FATHER_NAME,Students.MOTHER_PHONE
                 ,Students.FATHER_PHONE};
 
+        // create alert
         builder = new AlertDialog.Builder(UpdateStudent.this);
-        builder.setTitle("eneter");
+        builder.setTitle("enter data");
         final EditText et = new EditText(this);
+
+        // if it is phone number
         if (findIndex(idies, id) == 3 || findIndex(idies, id) == 4 || findIndex(idies, id) == 7 || findIndex(idies, id) == 8)
         {
             et.setInputType(InputType.TYPE_CLASS_NUMBER);
@@ -301,29 +298,17 @@ public class UpdateStudent extends AppCompatActivity implements View.OnCreateCon
             public void onClick(DialogInterface dialog,
                                 int which) {
 
-                // I got it
+                // get the ID
                 String previousId = getId(nametv.getText().toString());
 
-                // When the user click yes button
-                // then app will close
                 ContentValues values;
                 values = new ContentValues();
-                /*
-                values.put(Students.NAME, nametv.getText().toString());
-                values.put(Students.ADDRESS, addresstv.getText().toString());
-                values.put(Students.PRIVATE_PHONE, personalPhonetv.getText().toString());
-                values.put(Students.HOME_PHONE, homePhonetv.getText().toString());
-                values.put(Students.MOTHER_NAME, motherNametv.getText().toString());
-                values.put(Students.FATHER_NAME, fatherNametv.getText().toString());
-                values.put(Students.MOTHER_PHONE, motherPhonetv.getText().toString());
-                values.put(Students.FATHER_PHONE, fatherPhonetv.getText().toString());
-                values.put(Students.CLASS, gradetv.getText().toString());
-                */
 
                 values.put(Students.ACTIVE, false);
 
                 db = hlp.getWritableDatabase();
 
+                // change the active to false in the old student
                 db.update(Students.TABLE_STUDENTS, values, "_id = ?", new String[]{getId(nametv.getText().toString())});
                 db.close();
                 textVies[findIndex(idies, id)].setText(et.getText());
@@ -353,11 +338,6 @@ public class UpdateStudent extends AppCompatActivity implements View.OnCreateCon
 
                 // need to change thew graeds to the new ID and to update the system
                 dialog.cancel();
-
-
-
-
-
             }
         });
 
@@ -367,10 +347,19 @@ public class UpdateStudent extends AppCompatActivity implements View.OnCreateCon
         // Show the Alert Dialog box
         alertDialog.show();
 
-
         return true;
     }
 
+    /**
+     * findIndex.
+     * short dec: return the index of the id (-1 not found)
+     *
+     * <p>
+     *      int[] idies
+     *      int id
+     * @param	id - the id that we wanna find, idies - the arr of the idies
+     * @return	none
+     */
     private int findIndex(int[] idies, int id) {
         for (int i = 0; i < idies.length; i++)
         {
@@ -379,7 +368,7 @@ public class UpdateStudent extends AppCompatActivity implements View.OnCreateCon
                 return (i);
             }
         }
-        return 0;
+        return -1;
     }
 
     /**
@@ -437,7 +426,7 @@ public class UpdateStudent extends AppCompatActivity implements View.OnCreateCon
         }
         else if(whatClicked.equals("add student"))
         {
-            si = new Intent(this,MainActivity.class);
+            si = new Intent(this,GetStudent.class);
             startActivity(si);
         }
         else if(whatClicked.equals("credits"))
@@ -448,7 +437,4 @@ public class UpdateStudent extends AppCompatActivity implements View.OnCreateCon
 
         return  true;
     }
-
-
-
 }

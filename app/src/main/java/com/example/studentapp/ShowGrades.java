@@ -23,6 +23,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * The ShowGrades activity.
+ *
+ *  @author Ori Ofek <oriofek106@gmail.com> 15/02/2021
+ *  @version 1.0
+ *  @since 15/02/2021
+ *  sort description:
+ *  this is the activty the implement the exercise that my teacher gave and in this activity I show the grades...
+ */
 public class ShowGrades extends AppCompatActivity implements View.OnCreateContextMenuListener {
     SQLiteDatabase db;
     HelperDB hlp;
@@ -34,7 +43,6 @@ public class ShowGrades extends AppCompatActivity implements View.OnCreateContex
     boolean cond;
     Switch sc;
     ArrayList<String> sortedString;
-
     AutoCompleteTextView students;
     ArrayList<String> tbl = new ArrayList<>();
     ArrayList<String> grades = new ArrayList<>();
@@ -59,6 +67,12 @@ public class ShowGrades extends AppCompatActivity implements View.OnCreateContex
         }
     }
 
+    /**
+     * getStudents.
+     * short dec: get the current student and put it in the autoComplited
+     *
+     * @return	none
+     */
     public void getStudents() {
         String[] columns = {Students.NAME,Students.ACTIVE};
         String selection = null;
@@ -68,13 +82,14 @@ public class ShowGrades extends AppCompatActivity implements View.OnCreateContex
         String orderBy = null;
         String limit = null;
 
+        // query the students
         db = hlp.getWritableDatabase();
         crsr = db.query(Students.TABLE_STUDENTS, columns, selection, selectionArgs, groupBy, having, orderBy, limit);
         crsr.moveToFirst();
 
         tbl = new ArrayList<>();
 
-        int nameIndex = crsr.getColumnIndex(Students.NAME);
+        int nameIndex = 0;
         tbl.add("students");
         while (!crsr.isAfterLast())
         {
@@ -96,11 +111,19 @@ public class ShowGrades extends AppCompatActivity implements View.OnCreateContex
         adp.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         students.setAdapter(adp);
-        //getId("ori");
     }
 
+    /**
+     * search.
+     * short dec: show the grades
+     *
+     * <p>
+     *      View view
+     * @param	view - see which button pressed
+     * @return	none
+     */
     public void search(View view) {
-        if (cond)
+        if (cond) // search by student
         {
             String name = students.getText().toString();
 
@@ -127,9 +150,8 @@ public class ShowGrades extends AppCompatActivity implements View.OnCreateContex
             idArr = new ArrayList<>();
             sortedString = new ArrayList<>();
 
-
+            // do query
             db = hlp.getWritableDatabase();
-
             crsr = db.query(Grades.TABLE_GRADES, columns, selection, selectionArgs, groupBy, having, orderBy, limit);
             crsr.moveToFirst();
 
@@ -148,24 +170,22 @@ public class ShowGrades extends AppCompatActivity implements View.OnCreateContex
 
                 idIndex = crsr.getColumnIndex(Grades.GRADE_ID);
 
+                // if the grade is relevent
                 if (rel.equals("1"))
                 {
                     idArr.add(Integer.valueOf(crsr.getString(idIndex)));
 
+                    //add it to the sorted
                     sortedString.add(subject + ":" + grade);
                     grades.add(subject + ":" + grade);
                 }
-
-
                 crsr.moveToNext();
             }
 
         }
-        else
+        else // search by subject
         {
             String subject = students.getText().toString();
-
-            // query
             String[] columns = {Grades.STUDENT,Grades.RELEVANT,Grades.GRADE,Grades.GRADE_ID};
             String selection = Grades.SUBJECT + "=?";
             String[] selectionArgs = {subject};
@@ -180,8 +200,8 @@ public class ShowGrades extends AppCompatActivity implements View.OnCreateContex
             idArr = new ArrayList<>();
             sortedString = new ArrayList<>();
 
+            // query from the db
             db = hlp.getWritableDatabase();
-
             crsr = db.query(Grades.TABLE_GRADES, columns, selection, selectionArgs, groupBy, having, orderBy, limit);
             crsr.moveToFirst();
 
@@ -200,6 +220,7 @@ public class ShowGrades extends AppCompatActivity implements View.OnCreateContex
 
                 idIndex = crsr.getColumnIndex(Grades.GRADE_ID);
 
+                // if he's relevant
                 if (rel.equals("1"))
                 {
                     idArr.add(Integer.valueOf(crsr.getString(idIndex)));
@@ -208,7 +229,6 @@ public class ShowGrades extends AppCompatActivity implements View.OnCreateContex
                     grades.add(getName(name) + ":" + grade);
                 }
 
-
                 crsr.moveToNext();
             }
         }
@@ -216,6 +236,7 @@ public class ShowGrades extends AppCompatActivity implements View.OnCreateContex
         crsr.close();
         db.close();
 
+        // sort it
         Collections.sort(sortedString);
         adp = new ArrayAdapter<String>(this,
                 android.R.layout.simple_spinner_item, sortedString);
@@ -223,6 +244,16 @@ public class ShowGrades extends AppCompatActivity implements View.OnCreateContex
         ls.setOnCreateContextMenuListener(this);
 
     }
+
+    /**
+     * getName.
+     * short dec: get the name
+     *
+     * <p>
+     *     String id
+     * @param	id - the id of it
+     * @return	the name of it
+     */
     private String getName(String id) {
         String[] columns = {Students.NAME ,Students.ACTIVE };
         String selection = Students.KEY_ID_STUDENT + "=?";
@@ -235,16 +266,18 @@ public class ShowGrades extends AppCompatActivity implements View.OnCreateContex
         Cursor temp;
         int nameIndex;
 
-
+        // do query
         db = hlp.getWritableDatabase();
-
         temp = db.query(Students.TABLE_STUDENTS, columns, selection, selectionArgs, groupBy, having, orderBy, limit);
         temp.moveToFirst();
+
         while (!temp.isAfterLast())
         {
             nameIndex = temp.getColumnIndex(Students.ACTIVE);
 
             String rel = temp.getString(nameIndex);
+
+            // if he is active
             if(rel.equals("1"))
             {
                 nameIndex = temp.getColumnIndex(Students.NAME);
@@ -255,16 +288,22 @@ public class ShowGrades extends AppCompatActivity implements View.OnCreateContex
 
             }
             temp.moveToNext();
-
         }
-
 
         temp.close();
         db.close();
         return name;
     }
 
-
+    /**
+     * getId.
+     * short dec: get the id
+     *
+     * <p>
+     *     String s
+     * @param	s - the name
+     * @return	the id of the name
+     */
     private String getId(String s) {
         String[] columns = {Students.KEY_ID_STUDENT ,Students.ACTIVE }; // I am here
         String selection = Students.NAME + "=?";
@@ -366,6 +405,15 @@ public class ShowGrades extends AppCompatActivity implements View.OnCreateContex
         return true;
     }
 
+    /**
+     * changeCond.
+     * change the sort condition
+     *
+     * <p>
+     *      View view
+     * @param	view - see which button pressed
+     * @return	none
+     */
     public void changeCond(View view) {
         cond = !cond;
         ls.setAdapter(null);
@@ -383,6 +431,12 @@ public class ShowGrades extends AppCompatActivity implements View.OnCreateContex
         }
     }
 
+    /**
+     * changeCond.
+     * put the subjects into the autoComplited
+     *
+     * @return	none
+     */
     private void getSubjects() {
         String[] columns = {Grades.SUBJECT,Grades.RELEVANT};
         String selection = null;
@@ -477,7 +531,7 @@ public class ShowGrades extends AppCompatActivity implements View.OnCreateContex
         }
         else if(whatClicked.equals("add student"))
         {
-            si = new Intent(this,MainActivity.class);
+            si = new Intent(this,GetStudent.class);
             startActivity(si);
         }
         else if(whatClicked.equals("credits"))
@@ -485,7 +539,6 @@ public class ShowGrades extends AppCompatActivity implements View.OnCreateContex
             si = new Intent(this,Credits.class);
             startActivity(si);
         }
-
 
         return  true;
     }

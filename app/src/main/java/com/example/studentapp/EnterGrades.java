@@ -353,7 +353,7 @@ public class EnterGrades extends AppCompatActivity {
         }
         else if(whatClicked.equals("add student"))
         {
-            si = new Intent(this,MainActivity.class);
+            si = new Intent(this,GetStudent.class);
             startActivity(si);
         }
         else if(whatClicked.equals("credits"))

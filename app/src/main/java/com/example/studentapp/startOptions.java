@@ -8,6 +8,15 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
+/**
+ * The startOptions activity.
+ *
+ *  @author Ori Ofek <oriofek106@gmail.com> 15/02/2021
+ *  @version 1.0
+ *  @since 15/02/2021
+ *  sort description:
+ *  this is the activty the implement the exercise that my teacher gave and in this activity I show the options
+ */
 public class startOptions extends AppCompatActivity {
     Intent si;
 
@@ -78,7 +87,7 @@ public class startOptions extends AppCompatActivity {
         }
         if(whatClicked.equals("add student"))
         {
-            si = new Intent(this,MainActivity.class);
+            si = new Intent(this,GetStudent.class);
             startActivity(si);
         }
         else if(whatClicked.equals("credits"))

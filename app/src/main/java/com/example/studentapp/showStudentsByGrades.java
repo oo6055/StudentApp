@@ -21,9 +21,17 @@ import android.widget.Spinner;
 import java.util.ArrayList;
 import java.util.Collections;
 
+/**
+ * The showStudentsByGrades activity.
+ *
+ *  @author Ori Ofek <oriofek106@gmail.com> 15/02/2021
+ *  @version 1.0
+ *  @since 15/02/2021
+ *  sort description:
+ *  this is the activty the implement the exercise that my teacher gave and in this activity I show the students by grades...
+ */
 public class showStudentsByGrades extends AppCompatActivity implements View.OnCreateContextMenuListener
 {
-
     SQLiteDatabase db;
     HelperDB hlp;
     Intent si;
@@ -32,8 +40,6 @@ public class showStudentsByGrades extends AppCompatActivity implements View.OnCr
     Cursor crsr;
     ListView ls;
     ContentValues values;
-
-
     AutoCompleteTextView classes;
     ArrayList<String> tbl = new ArrayList<>();
     ArrayList<String> students = new ArrayList<>();
@@ -44,12 +50,16 @@ public class showStudentsByGrades extends AppCompatActivity implements View.OnCr
         setContentView(R.layout.activity_show_students_by_grades);
         classes = (AutoCompleteTextView) findViewById(R.id.name);
         ls = (ListView) findViewById(R.id.students);
-
         hlp = new HelperDB(this);
         getClasses();
         ls.setOnCreateContextMenuListener(this);
     }
 
+    /**
+     * getClasses.
+     * short dec: get the classes into autoComplited
+     * @return	none
+     */
     public void getClasses() {
         String[] columns = {Students.CLASS,Students.ACTIVE};
         String selection = null;
@@ -59,12 +69,12 @@ public class showStudentsByGrades extends AppCompatActivity implements View.OnCr
         String orderBy = null;
         String limit = null;
 
+        // do the query
         db = hlp.getWritableDatabase();
         crsr = db.query(Students.TABLE_STUDENTS, columns, selection, selectionArgs, groupBy, having, orderBy, limit);
         crsr.moveToFirst();
 
         int nameIndex;
-        tbl.add("students");
         while (!crsr.isAfterLast())
         {
             nameIndex = crsr.getColumnIndex(Students.ACTIVE);
@@ -72,6 +82,7 @@ public class showStudentsByGrades extends AppCompatActivity implements View.OnCr
 
             nameIndex = crsr.getColumnIndex(Students.CLASS);
             String name = crsr.getString(nameIndex);
+            // if he is active and the class is not already exsist
             if(!tbl.contains(name) && rel.equals("1"))
             {
                 tbl.add(name);
@@ -80,15 +91,24 @@ public class showStudentsByGrades extends AppCompatActivity implements View.OnCr
         }
         crsr.close();
         db.close();
+
+        // put it as a autoComplited
         adp = new ArrayAdapter<String>(this,
                 android.R.layout.simple_spinner_item, tbl);
         adp.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         classes.setAdapter(adp);
-        //getId("ori");
     }
 
-
+    /**
+     * search.
+     * short dec: show on the ls the students
+     *
+     * <p>
+     *      View view
+     * @param	view - see which button pressed
+     * @return	none
+     */
     public void search(View view) {
         String numOfclass = classes.getText().toString();
 
@@ -104,9 +124,7 @@ public class showStudentsByGrades extends AppCompatActivity implements View.OnCr
         String rel = "";
         students = new ArrayList<>();
 
-
         db = hlp.getWritableDatabase();
-
         crsr = db.query(Students.TABLE_STUDENTS, columns, selection, selectionArgs, groupBy, having, orderBy, limit);
         crsr.moveToFirst();
 
@@ -120,6 +138,7 @@ public class showStudentsByGrades extends AppCompatActivity implements View.OnCr
             idIndex = crsr.getColumnIndex(Students.ACTIVE);
             rel = crsr.getString(idIndex);
 
+            // if the student is active
             if(rel.equals("1"))
             {
                 students.add(name);
@@ -132,6 +151,7 @@ public class showStudentsByGrades extends AppCompatActivity implements View.OnCr
         crsr.close();
         db.close();
 
+        // sort them
         Collections.sort(students);
         adp = new ArrayAdapter<String>(this,
                 android.R.layout.simple_spinner_item, students);
@@ -217,6 +237,15 @@ public class showStudentsByGrades extends AppCompatActivity implements View.OnCr
         return true;
     }
 
+    /**
+     * getId.
+     * short dec: get the id
+     *
+     * <p>
+     *     String s
+     * @param	s - the name
+     * @return	the id of the name
+     */
     private String getId(String s) {
         String[] columns = {Students.KEY_ID_STUDENT ,Students.ACTIVE }; // I am here
         String selection = Students.NAME + "=?";
@@ -228,11 +257,10 @@ public class showStudentsByGrades extends AppCompatActivity implements View.OnCr
         String idStud = "";
         int nameIndex;
 
-
         db = hlp.getWritableDatabase();
-
         crsr = db.query(Students.TABLE_STUDENTS, columns, selection, selectionArgs, groupBy, having, orderBy, limit);
         crsr.moveToFirst();
+
         while (!crsr.isAfterLast())
         {
             nameIndex = crsr.getColumnIndex(Students.ACTIVE);
@@ -245,10 +273,7 @@ public class showStudentsByGrades extends AppCompatActivity implements View.OnCr
                 return idStud;
             }
             crsr.moveToNext();
-
         }
-
-
         crsr.close();
         db.close();
         return idStud;
@@ -310,7 +335,7 @@ public class showStudentsByGrades extends AppCompatActivity implements View.OnCr
         }
         else if(whatClicked.equals("add student"))
         {
-            si = new Intent(this,MainActivity.class);
+            si = new Intent(this,GetStudent.class);
             startActivity(si);
         }
         else if(whatClicked.equals("credits"))

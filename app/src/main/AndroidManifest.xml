@@ -10,7 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.StudentApp">
         <activity android:name=".Credits"></activity>
-        <activity android:name=".MainActivity" />
+        <activity android:name=".GetStudent" />
         <activity android:name=".ChangeGrades" />
         <activity android:name=".UpdateStudent" />
         <activity android:name=".showStudentsByGrades" />

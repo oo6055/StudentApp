@@ -69,7 +69,7 @@ public class ChangeGrades extends AppCompatActivity implements OnLongClickListen
         }
 
         // show the details
-        show(samster);
+        show();
 
         // put the lisners
         subject.setOnLongClickListener(this);
@@ -80,11 +80,12 @@ public class ChangeGrades extends AppCompatActivity implements OnLongClickListen
     }
 
     /**
-     * Show.
+     * show.
+     * short dec: show the grade's detainls
      *
-     * @param view the view
+     * @return	none
      */
-    public void show(View view) {
+    public void show() {
         String[] columns = {Grades.SUBJECT,Grades.GRADE,Grades.SAMASTER,Grades.STUDENT};
         String selection = Grades.GRADE_ID + "=?";
         String[] selectionArgs = {String.valueOf(gradeId)};
@@ -392,7 +393,7 @@ public class ChangeGrades extends AppCompatActivity implements OnLongClickListen
         }
         else if(whatClicked.equals("add student"))
         {
-            si = new Intent(this,MainActivity.class);
+            si = new Intent(this,GetStudent.class);
             startActivity(si);
         }
         else if(whatClicked.equals("credits"))
