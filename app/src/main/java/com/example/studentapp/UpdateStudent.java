@@ -78,7 +78,7 @@ public class UpdateStudent extends AppCompatActivity implements View.OnLongClick
         // I am so Lazy (:
         for (int i = 0; i < idies.length; i++)
         {
-            idies[i].setOnCreateContextMenuListener(this);
+            idies[i].setOnLongClickListener(this);
         }
 
         // if we got a command from other activity
@@ -284,7 +284,7 @@ public class UpdateStudent extends AppCompatActivity implements View.OnLongClick
         final EditText et = new EditText(this);
 
         // if it is phone number
-        if (findIndex(idies, id) == 3 || findIndex(idies, id) == 4 || findIndex(idies, id) == 7 || findIndex(idies, id) == 8)
+        if (findIndex(idies, view.getId()) == 3 || findIndex(idies, view.getId()) == 4 || findIndex(idies, view.getId()) == 7 || findIndex(idies, view.getId()) == 8)
         {
             et.setInputType(InputType.TYPE_CLASS_NUMBER);
         }
@@ -311,7 +311,7 @@ public class UpdateStudent extends AppCompatActivity implements View.OnLongClick
                 // change the active to false in the old student
                 db.update(Students.TABLE_STUDENTS, values, "_id = ?", new String[]{getId(nametv.getText().toString())});
                 db.close();
-                textVies[findIndex(idies, id)].setText(et.getText());
+                textVies[findIndex(idies, view.getId())].setText(et.getText());
 
                 values = new ContentValues();
                 values.put(Students.NAME, nametv.getText().toString());

@@ -32,8 +32,9 @@
                 android:id="@+id/name"
                 android:layout_width="0px"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:hint="studentName" />
+                android:layout_weight="4"
+                android:gravity="center"
+                android:hint="class" />
 
             <Space
                 android:layout_width="0dp"
