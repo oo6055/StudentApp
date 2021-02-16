@@ -83,7 +83,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="0px"
                 android:layout_weight="20"
-                android:text="personalPhone"
+                android:text="personal Phone"
                 android:textSize="36sp" />
 
 
@@ -111,7 +111,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="0px"
                 android:layout_weight="20"
-                android:text="motherName"
+                android:text="mother Name"
                 android:textSize="36sp" />
 
             <Space

@@ -183,7 +183,7 @@ public class ChangeGrades extends AppCompatActivity implements OnLongClickListen
         int[] idies= {(R.id.nameOfStudent),(R.id.grade),(R.id.samster),(R.id.subject)};
 
         AlertDialog.Builder builder = new AlertDialog.Builder(ChangeGrades.this);
-        builder.setTitle("enter data");
+        builder.setTitle("enter " + dataToPut[findIndex(idies, view.getId())]);
 
         // if we choose grades or samster
         if (findIndex(idies, view.getId()) == GRADE_INDEX || findIndex(idies, view.getId()) == SAMASTER_INDEX )

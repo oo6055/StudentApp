@@ -47,7 +47,7 @@ public class UpdateStudent extends AppCompatActivity implements View.OnLongClick
     TextView motherPhonetv;
     TextView fatherNametv;
     TextView fatherPhonetv;
-    int id;
+    boolean thereIsSomeOne;
     AutoCompleteTextView students;
     ArrayList<String> tbl = new ArrayList<>();
     AlertDialog.Builder builder;
@@ -67,6 +67,8 @@ public class UpdateStudent extends AppCompatActivity implements View.OnLongClick
         fatherNametv = (TextView) findViewById(R.id.fatherName);
         motherPhonetv = (TextView) findViewById(R.id.motherPhone);
         fatherPhonetv = (TextView) findViewById(R.id.fatherPhone);
+
+        thereIsSomeOne = false;
 
         TextView[] idies= {nametv,gradetv,addresstv,personalPhonetv,homePhonetv,motherNametv,
                 fatherNametv,motherPhonetv,fatherPhonetv};
@@ -151,7 +153,19 @@ public class UpdateStudent extends AppCompatActivity implements View.OnLongClick
         // if the student is not exsist
         if(studentId.equals(""))
         {
+            // zero the edit texts
+            TextView[] idies= {nametv,gradetv,addresstv,personalPhonetv,homePhonetv,motherNametv,
+                    fatherNametv,motherPhonetv,fatherPhonetv};
+            String[] des = { "name", "class", "address" ,"personal Phone","home Phone","mother Name","father Name","mother Phone","father Phone"};
+
+            // I am so Lazy (:
+            for (int i = 0; i < idies.length; i++)
+            {
+                idies[i].setText(des[i]);
+            }
+
             Toast.makeText(this, name + " is not exsist", Toast.LENGTH_SHORT).show();
+            thereIsSomeOne = false;
             return;
         }
 
@@ -218,6 +232,7 @@ public class UpdateStudent extends AppCompatActivity implements View.OnLongClick
                 idIndex = crsr.getColumnIndex(Students.PRIVATE_PHONE);
                 temp = crsr.getString(idIndex);
                 personalPhonetv.setText(temp);
+                thereIsSomeOne = true;
             }
             crsr.moveToNext();
         }
@@ -277,75 +292,81 @@ public class UpdateStudent extends AppCompatActivity implements View.OnLongClick
         String[] student = {Students.NAME,Students.CLASS,Students.ADDRESS,Students.PRIVATE_PHONE,Students.HOME_PHONE
                 ,Students.MOTHER_NAME,Students.FATHER_NAME,Students.MOTHER_PHONE
                 ,Students.FATHER_PHONE};
+        String[] des = { "name", "class", "address" ,"personal Phone","home Phone","mother Name","father Name","mother Phone","father Phone"};
 
-        // create alert
-        builder = new AlertDialog.Builder(UpdateStudent.this);
-        builder.setTitle("enter data");
-        final EditText et = new EditText(this);
 
-        // if it is phone number
-        if (findIndex(idies, view.getId()) == 3 || findIndex(idies, view.getId()) == 4 || findIndex(idies, view.getId()) == 7 || findIndex(idies, view.getId()) == 8)
+        if (thereIsSomeOne)
         {
-            et.setInputType(InputType.TYPE_CLASS_NUMBER);
+            // create alert
+            builder = new AlertDialog.Builder(UpdateStudent.this);
+            builder.setTitle("enter " + des[findIndex(idies, view.getId())]);
+            final EditText et = new EditText(this);
+
+            // if it is phone number
+            if (findIndex(idies, view.getId()) == 3 || findIndex(idies, view.getId()) == 4 || findIndex(idies, view.getId()) == 7 || findIndex(idies, view.getId()) == 8)
+            {
+                et.setInputType(InputType.TYPE_CLASS_NUMBER);
+            }
+
+            builder.setView(et);
+
+
+            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+
+                @Override
+                public void onClick(DialogInterface dialog,
+                                    int which) {
+
+                    // get the ID
+                    String previousId = getId(nametv.getText().toString());
+
+                    ContentValues values;
+                    values = new ContentValues();
+
+                    values.put(Students.ACTIVE, false);
+
+                    db = hlp.getWritableDatabase();
+
+                    // change the active to false in the old student
+                    db.update(Students.TABLE_STUDENTS, values, "_id = ?", new String[]{getId(nametv.getText().toString())});
+                    db.close();
+                    textVies[findIndex(idies, view.getId())].setText(et.getText());
+
+                    values = new ContentValues();
+                    values.put(Students.NAME, nametv.getText().toString());
+                    values.put(Students.ADDRESS, addresstv.getText().toString());
+                    values.put(Students.PRIVATE_PHONE, personalPhonetv.getText().toString());
+                    values.put(Students.HOME_PHONE, homePhonetv.getText().toString());
+                    values.put(Students.MOTHER_NAME, motherNametv.getText().toString());
+                    values.put(Students.FATHER_NAME, fatherNametv.getText().toString());
+                    values.put(Students.MOTHER_PHONE, motherPhonetv.getText().toString());
+                    values.put(Students.FATHER_PHONE, fatherPhonetv.getText().toString());
+                    values.put(Students.CLASS, gradetv.getText().toString());
+                    values.put(Students.ACTIVE, true);
+                    db = hlp.getWritableDatabase();
+
+
+                    db.insert(Students.TABLE_STUDENTS, null,values);
+
+                    values = new ContentValues();
+                    values.put(Grades.STUDENT,getId(nametv.getText().toString())); // the new ID
+                    db.update(Grades.TABLE_GRADES, values, "Student = ?", new String[]{previousId});
+                    db.close();
+
+                    db.close();
+
+                    // need to change thew graeds to the new ID and to update the system
+                    dialog.cancel();
+                }
+            });
+
+            // Create the Alert dialog
+            AlertDialog alertDialog = builder.create();
+
+            // Show the Alert Dialog box
+            alertDialog.show();
         }
 
-        builder.setView(et);
-
-
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-
-            @Override
-            public void onClick(DialogInterface dialog,
-                                int which) {
-
-                // get the ID
-                String previousId = getId(nametv.getText().toString());
-
-                ContentValues values;
-                values = new ContentValues();
-
-                values.put(Students.ACTIVE, false);
-
-                db = hlp.getWritableDatabase();
-
-                // change the active to false in the old student
-                db.update(Students.TABLE_STUDENTS, values, "_id = ?", new String[]{getId(nametv.getText().toString())});
-                db.close();
-                textVies[findIndex(idies, view.getId())].setText(et.getText());
-
-                values = new ContentValues();
-                values.put(Students.NAME, nametv.getText().toString());
-                values.put(Students.ADDRESS, addresstv.getText().toString());
-                values.put(Students.PRIVATE_PHONE, personalPhonetv.getText().toString());
-                values.put(Students.HOME_PHONE, homePhonetv.getText().toString());
-                values.put(Students.MOTHER_NAME, motherNametv.getText().toString());
-                values.put(Students.FATHER_NAME, fatherNametv.getText().toString());
-                values.put(Students.MOTHER_PHONE, motherPhonetv.getText().toString());
-                values.put(Students.FATHER_PHONE, fatherPhonetv.getText().toString());
-                values.put(Students.CLASS, gradetv.getText().toString());
-                values.put(Students.ACTIVE, true);
-                db = hlp.getWritableDatabase();
-
-
-                db.insert(Students.TABLE_STUDENTS, null,values);
-
-                values = new ContentValues();
-                values.put(Grades.STUDENT,getId(nametv.getText().toString())); // the new ID
-                db.update(Grades.TABLE_GRADES, values, "Student = ?", new String[]{previousId});
-                db.close();
-
-                db.close();
-
-                // need to change thew graeds to the new ID and to update the system
-                dialog.cancel();
-            }
-        });
-
-        // Create the Alert dialog
-        AlertDialog alertDialog = builder.create();
-
-        // Show the Alert Dialog box
-        alertDialog.show();
 
         return true;
     }
