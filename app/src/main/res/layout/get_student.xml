@@ -17,9 +17,16 @@
         android:layout_weight="4"
         android:orientation="vertical">
 
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="0px"
+            android:layout_weight="1" />
+
         <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="0px"
+            android:layout_weight="8"
+            android:fillViewport="true">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -50,7 +57,7 @@
                     android:layout_height="0px"
                     android:layout_weight="20"
                     android:ems="10"
-                    android:hint="class"
+                    android:hint="grade"
                     android:inputType="textPersonName" />
 
                 <Space
@@ -166,6 +173,11 @@
 
             </LinearLayout>
         </ScrollView>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="0px"
+            android:layout_weight="3" />
 
     </LinearLayout>
 
