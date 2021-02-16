@@ -131,6 +131,7 @@ public class ShowGrades extends AppCompatActivity implements View.OnCreateContex
             String studentId = getId(name);
             if(studentId == "")
             {
+                ls.setAdapter(null);
                 Toast.makeText(this, name + " is not found", Toast.LENGTH_SHORT).show();
                 return;
             }

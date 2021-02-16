@@ -225,14 +225,8 @@ public class showStudentsByGrades extends AppCompatActivity implements View.OnCr
 
             db.update(Students.TABLE_STUDENTS, values, "_id = ?", new String[]{getId(students.get(i))});
 
-
             db.close();
-
-
-            classes.setText(getIntent().getStringExtra("name"));
             search(ls);
-
-            // need to change thew graeds to the new ID and to update the system
         }
         return true;
     }
