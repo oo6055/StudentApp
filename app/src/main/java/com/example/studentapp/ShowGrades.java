@@ -3,20 +3,26 @@ package com.example.studentapp;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.ContextMenu;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -46,6 +52,9 @@ public class ShowGrades extends AppCompatActivity implements View.OnCreateContex
     AutoCompleteTextView students;
     ArrayList<String> tbl = new ArrayList<>();
     ArrayList<String> grades = new ArrayList<>();
+    CustomAdapter adp1;
+    ArrayList<String> gradesArr;
+    ArrayList<String> samsters;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,6 +132,9 @@ public class ShowGrades extends AppCompatActivity implements View.OnCreateContex
      * @return	none
      */
     public void search(View view) {
+        gradesArr = new ArrayList<>();
+        samsters = new ArrayList<>();
+
         if (cond) // search by student
         {
             String name = students.getText().toString();
@@ -137,7 +149,7 @@ public class ShowGrades extends AppCompatActivity implements View.OnCreateContex
             }
 
             // query
-            String[] columns = {Grades.SUBJECT,Grades.RELEVANT,Grades.GRADE,Grades.GRADE_ID};
+            String[] columns = {Grades.SUBJECT,Grades.RELEVANT,Grades.GRADE,Grades.GRADE_ID, Grades.SAMASTER};
             String selection = Grades.STUDENT + "=?";
             String[] selectionArgs = {studentId};
             String groupBy = null;
@@ -150,7 +162,6 @@ public class ShowGrades extends AppCompatActivity implements View.OnCreateContex
             grades = new ArrayList<>();
             idArr = new ArrayList<>();
             sortedString = new ArrayList<>();
-
             // do query
             db = hlp.getWritableDatabase();
             crsr = db.query(Grades.TABLE_GRADES, columns, selection, selectionArgs, groupBy, having, orderBy, limit);
@@ -177,8 +188,14 @@ public class ShowGrades extends AppCompatActivity implements View.OnCreateContex
                     idArr.add(Integer.valueOf(crsr.getString(idIndex)));
 
                     //add it to the sorted
-                    sortedString.add(subject + ":" + grade);
-                    grades.add(subject + ":" + grade);
+                    sortedString.add(subject);
+                    grades.add(subject);
+
+                    gradesArr.add(grade);
+
+                    idIndex = crsr.getColumnIndex(Grades.SAMASTER);
+                    samsters.add(crsr.getString(idIndex));
+
                 }
                 crsr.moveToNext();
             }
@@ -187,7 +204,7 @@ public class ShowGrades extends AppCompatActivity implements View.OnCreateContex
         else // search by subject
         {
             String subject = students.getText().toString();
-            String[] columns = {Grades.STUDENT,Grades.RELEVANT,Grades.GRADE,Grades.GRADE_ID};
+            String[] columns = {Grades.STUDENT,Grades.RELEVANT,Grades.GRADE,Grades.GRADE_ID,Grades.SAMASTER};
             String selection = Grades.SUBJECT + "=?";
             String[] selectionArgs = {subject};
             String groupBy = null;
@@ -226,8 +243,14 @@ public class ShowGrades extends AppCompatActivity implements View.OnCreateContex
                 {
                     idArr.add(Integer.valueOf(crsr.getString(idIndex)));
 
-                    sortedString.add(getName(name) + ":" + grade);
-                    grades.add(getName(name) + ":" + grade);
+                    //add it to the sorted
+                    sortedString.add(getName(name));
+                    grades.add(getName(name));
+
+                    gradesArr.add(grade);
+
+                    idIndex = crsr.getColumnIndex(Grades.SAMASTER);
+                    samsters.add(crsr.getString(idIndex));
                 }
 
                 crsr.moveToNext();
@@ -239,9 +262,9 @@ public class ShowGrades extends AppCompatActivity implements View.OnCreateContex
 
         // sort it
         Collections.sort(sortedString);
-        adp = new ArrayAdapter<String>(this,
-                android.R.layout.simple_spinner_item, sortedString);
-        ls.setAdapter(adp);
+        adp1 = new CustomAdapter(getApplicationContext(),
+               gradesArr ,sortedString,samsters);
+        ls.setAdapter(adp1);
         ls.setOnCreateContextMenuListener(this);
 
     }
@@ -543,5 +566,65 @@ public class ShowGrades extends AppCompatActivity implements View.OnCreateContex
 
         return  true;
     }
+}
 
+class CustomAdapter extends BaseAdapter {
+    Context context;
+    LayoutInflater inflter;
+    ArrayList<String> grade;
+    ArrayList<String> subject;
+    ArrayList<String> samster;
+
+    public CustomAdapter(Context applicationContext, ArrayList<String> grade, ArrayList<String> subject, ArrayList<String> samster) {
+        this.context = context;
+        this.grade = grade;
+        this.subject = subject;
+        this.samster = samster;
+        inflter = (LayoutInflater.from(applicationContext));
+    }
+
+    @Override
+    public int getCount() {
+        return grade.size();
+    }
+
+    @Override
+    public Object getItem(int i) {
+        return null;
+    }
+
+    @Override
+    public long getItemId(int i) {
+        return 0;
+    }
+
+    @Override
+    public View getView(int i, View view, ViewGroup viewGroup) {
+        view = inflter.inflate(R.layout.custom_lv_layout, null);
+        TextView subject = (TextView) view.findViewById(R.id.tV);
+        TextView samster = (TextView) view.findViewById(R.id.samasterListView);
+        TextView grade = (TextView) view.findViewById(R.id.gradePlace);
+
+        samster.setTextColor(Color.BLACK);
+        subject.setTextColor(Color.BLACK);
+
+        subject.setText(this.subject.get(i));
+        samster.setText(this.samster.get(i));
+        if (Integer.valueOf(this.grade.get(i)) < 56)
+        {
+            grade.setTextColor(Color.RED);
+        }
+        else if (Integer.valueOf(this.grade.get(i)) > 90)
+        {
+            grade.setTextColor(Color.BLUE);
+        }
+        else
+        {
+            grade.setTextColor(Color.BLACK);
+        }
+
+        grade.setText(this.grade.get(i));
+        samster.setText(this.samster.get(i));
+        return view;
+    }
 }
