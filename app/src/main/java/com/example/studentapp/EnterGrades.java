@@ -251,9 +251,9 @@ public class EnterGrades extends AppCompatActivity {
         // make query
         db = hlp.getWritableDatabase();
         temp = db.query(Students.TABLE_STUDENTS, columns, selection, selectionArgs, groupBy, having, orderBy, limit);
-
-
         temp.moveToFirst();
+
+        //start the scan
         while (!temp.isAfterLast())
         {
             nameIndex = temp.getColumnIndex(Students.ACTIVE);
@@ -270,7 +270,6 @@ public class EnterGrades extends AppCompatActivity {
                 return idStud;
             }
             temp.moveToNext();
-
         }
         // close and return ""
         temp.close();
@@ -341,7 +340,7 @@ public class EnterGrades extends AppCompatActivity {
             si = new Intent(this,showStudentsByGrades.class);
             startActivity(si);
         }
-        else if (whatClicked.equals("show students By classes"))
+        else if (whatClicked.equals("show students by classes"))
         {
             si = new Intent(this,showStudentsByGrades.class);
             startActivity(si);

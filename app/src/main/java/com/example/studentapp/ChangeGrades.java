@@ -44,7 +44,6 @@ public class ChangeGrades extends AppCompatActivity implements OnLongClickListen
     TextView name;
     TextView subject;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -93,14 +92,13 @@ public class ChangeGrades extends AppCompatActivity implements OnLongClickListen
         String having = null;
         String orderBy = null;
         String limit = null;
+        int idIndex = 0;
 
         // query
         db = hlp.getWritableDatabase();
 
         crsr = db.query(Grades.TABLE_GRADES, columns, selection, selectionArgs, groupBy, having, orderBy, limit);
         crsr.moveToFirst();
-
-        int idIndex = 0;
 
         //get the grade details and put them on the tvs
         idIndex = crsr.getColumnIndex(Grades.SUBJECT);
@@ -115,11 +113,9 @@ public class ChangeGrades extends AppCompatActivity implements OnLongClickListen
         idIndex = crsr.getColumnIndex(Grades.STUDENT);
         name.setText("name = "+studentsName.get(idArray.indexOf(Integer.valueOf(crsr.getString(idIndex)))));
 
-
         crsr.close();
         db.close();
     }
-
 
     /**
      * getSubjects.
@@ -157,7 +153,6 @@ public class ChangeGrades extends AppCompatActivity implements OnLongClickListen
                 gradeId = Integer.valueOf(crsr.getString(nameIndex));
                 idArray.add(gradeId);
             }
-
             crsr.moveToNext();
         }
         crsr.close();
@@ -381,7 +376,7 @@ public class ChangeGrades extends AppCompatActivity implements OnLongClickListen
             si = new Intent(this,showStudentsByGrades.class);
             startActivity(si);
         }
-        else if (whatClicked.equals("show students By classes"))
+        else if (whatClicked.equals("show students by classes"))
         {
             si = new Intent(this,showStudentsByGrades.class);
             startActivity(si);

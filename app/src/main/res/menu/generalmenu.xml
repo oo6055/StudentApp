@@ -13,7 +13,7 @@
         android:title="show grades"
         />
     <item
-        android:title="show students By classes"
+        android:title="show students by classes"
         />
     <item
         android:title="change students details"

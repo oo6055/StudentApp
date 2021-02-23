@@ -70,12 +70,7 @@ public class startOptions extends AppCompatActivity {
             si.putExtra("toDo",false);
             startActivity(si);
         }
-        else if (whatClicked.equals("show students By classes"))
-        {
-            si = new Intent(this,showStudentsByGrades.class);
-            startActivity(si);
-        }
-        else if (whatClicked.equals("show students By classes"))
+        else if (whatClicked.equals("show students by classes"))
         {
             si = new Intent(this,showStudentsByGrades.class);
             startActivity(si);

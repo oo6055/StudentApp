@@ -53,8 +53,6 @@ public class ShowGrades extends AppCompatActivity implements View.OnCreateContex
     ArrayList<String> tbl = new ArrayList<>();
     ArrayList<String> grades = new ArrayList<>();
     CustomAdapter adp1;
-    ArrayList<String> gradesArr;
-    ArrayList<String> samsters;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -132,9 +130,6 @@ public class ShowGrades extends AppCompatActivity implements View.OnCreateContex
      * @return	none
      */
     public void search(View view) {
-        gradesArr = new ArrayList<>();
-        samsters = new ArrayList<>();
-
         if (cond) // search by student
         {
             String name = students.getText().toString();
@@ -187,14 +182,12 @@ public class ShowGrades extends AppCompatActivity implements View.OnCreateContex
                 {
                     idArr.add(Integer.valueOf(crsr.getString(idIndex)));
 
-                    //add it to the sorted
-                    sortedString.add(subject);
-                    grades.add(subject);
-
-                    gradesArr.add(grade);
-
                     idIndex = crsr.getColumnIndex(Grades.SAMASTER);
-                    samsters.add(crsr.getString(idIndex));
+
+                    //add it to the sorted
+                    sortedString.add(subject + ':' + grade + ':' + crsr.getString(idIndex));
+                    grades.add(subject + ':' + grade + ':' + crsr.getString(idIndex));
+
 
                 }
                 crsr.moveToNext();
@@ -243,14 +236,10 @@ public class ShowGrades extends AppCompatActivity implements View.OnCreateContex
                 {
                     idArr.add(Integer.valueOf(crsr.getString(idIndex)));
 
-                    //add it to the sorted
-                    sortedString.add(getName(name));
-                    grades.add(getName(name));
-
-                    gradesArr.add(grade);
-
                     idIndex = crsr.getColumnIndex(Grades.SAMASTER);
-                    samsters.add(crsr.getString(idIndex));
+                    //add it to the sorted
+                    sortedString.add(getName(name) +':' + grade + ':' + crsr.getString(idIndex));
+                    grades.add(getName(name)  +':' + grade + ':' + crsr.getString(idIndex));
                 }
 
                 crsr.moveToNext();
@@ -262,8 +251,7 @@ public class ShowGrades extends AppCompatActivity implements View.OnCreateContex
 
         // sort it
         Collections.sort(sortedString);
-        adp1 = new CustomAdapter(getApplicationContext(),
-               gradesArr ,sortedString,samsters);
+        adp1 = new CustomAdapter(getApplicationContext(),sortedString);
         ls.setAdapter(adp1);
         ls.setOnCreateContextMenuListener(this);
 
@@ -360,8 +348,6 @@ public class ShowGrades extends AppCompatActivity implements View.OnCreateContex
             temp.moveToNext();
 
         }
-
-
         temp.close();
         db.close();
         return idStud;
@@ -408,8 +394,9 @@ public class ShowGrades extends AppCompatActivity implements View.OnCreateContex
             si = new Intent(this,ChangeGrades.class);
             si.putExtra("graeId",idArr.get(grades.indexOf(sortedString.get(i))));
             si.putExtra("toDo",true);
+
             startActivity(si);
-            search(ls);
+
         }
 
         else if (op.equals("delete grade"))
@@ -543,7 +530,7 @@ public class ShowGrades extends AppCompatActivity implements View.OnCreateContex
             si = new Intent(this,showStudentsByGrades.class);
             startActivity(si);
         }
-        else if (whatClicked.equals("show students By classes"))
+        else if (whatClicked.equals("show students by classes"))
         {
             si = new Intent(this,showStudentsByGrades.class);
             startActivity(si);
@@ -568,38 +555,94 @@ public class ShowGrades extends AppCompatActivity implements View.OnCreateContex
     }
 }
 
+/**
+ * The CustomAdapter activity.
+ *
+ *  @author Ori Ofek <oriofek106@gmail.com> 23/02/2021
+ *  @version 1.0
+ *  @since 15/02/2021
+ *  sort description:
+ *  temp for the customAdp
+ */
 class CustomAdapter extends BaseAdapter {
     Context context;
+    ArrayList<String> data;
     LayoutInflater inflter;
-    ArrayList<String> grade;
-    ArrayList<String> subject;
-    ArrayList<String> samster;
 
-    public CustomAdapter(Context applicationContext, ArrayList<String> grade, ArrayList<String> subject, ArrayList<String> samster) {
+    /**
+     * CustomAdapter
+     * Short description.
+     * the constuctor
+     *
+     * <p>
+     *     Context applicationContext
+     *     ArrayList<String> data
+     * @param  data - the data in this format subject:grade:samster or name:grade:samster, applicationContext - the app contance
+     * @return	true if it success
+     */
+    public CustomAdapter(Context applicationContext, ArrayList<String> data) {
         this.context = context;
-        this.grade = grade;
-        this.subject = subject;
-        this.samster = samster;
+        this.data = data;
         inflter = (LayoutInflater.from(applicationContext));
     }
 
+    /**
+     * getCount
+     * Short description.
+     * get the number of the grades
+     *
+     * @return the number of the elements
+     */
     @Override
     public int getCount() {
-        return grade.size();
+        return data.size();
     }
 
+    /**
+     * getItem
+     * Short description.
+     * I need to do it
+     * <p>
+     *    int i
+     *
+     * @param  i - the number of the object
+     * @return null
+     */
     @Override
     public Object getItem(int i) {
         return null;
     }
 
+    /**
+     * getItemId
+     * Short description.
+     * I need to do it
+     * <p>
+     *    int i
+     *
+     * @param  i - the number of the object
+     * @return null
+     */
     @Override
     public long getItemId(int i) {
         return 0;
     }
 
+    /**
+     * getView
+     * Short description.
+     * in oder to create the view
+     * <p>
+     *    int i
+     *    View view
+     *    ViewGroup viewGroup
+     *
+     * @param  i - the number of the object,view - the view , viewGroup - the viewGroup
+     * @return null
+     */
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
+        String[] dataGrade = data.get(i).split(":");
         view = inflter.inflate(R.layout.custom_lv_layout, null);
         TextView subject = (TextView) view.findViewById(R.id.tV);
         TextView samster = (TextView) view.findViewById(R.id.samasterListView);
@@ -608,13 +651,13 @@ class CustomAdapter extends BaseAdapter {
         samster.setTextColor(Color.BLACK);
         subject.setTextColor(Color.BLACK);
 
-        subject.setText(this.subject.get(i));
-        samster.setText(this.samster.get(i));
-        if (Integer.valueOf(this.grade.get(i)) < 56)
+        subject.setText(dataGrade[0]);
+        samster.setText(dataGrade[2]);
+        if (Integer.valueOf(dataGrade[1]) < 56)
         {
             grade.setTextColor(Color.RED);
         }
-        else if (Integer.valueOf(this.grade.get(i)) > 90)
+        else if (Integer.valueOf(dataGrade[1]) > 90)
         {
             grade.setTextColor(Color.BLUE);
         }
@@ -623,8 +666,7 @@ class CustomAdapter extends BaseAdapter {
             grade.setTextColor(Color.BLACK);
         }
 
-        grade.setText(this.grade.get(i));
-        samster.setText(this.samster.get(i));
+        grade.setText(dataGrade[1]);
         return view;
     }
 }

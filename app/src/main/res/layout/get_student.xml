@@ -20,7 +20,7 @@
         <Space
             android:layout_width="match_parent"
             android:layout_height="0px"
-            android:layout_weight="1" />
+            android:layout_weight="0.5" />
 
         <ScrollView
             android:layout_width="match_parent"
@@ -177,7 +177,7 @@
         <Space
             android:layout_width="match_parent"
             android:layout_height="0px"
-            android:layout_weight="3" />
+            android:layout_weight="2" />
 
     </LinearLayout>
 
